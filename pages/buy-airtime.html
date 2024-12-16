@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buy Airtime</title>
+  <link rel="stylesheet" href="../css/buy-airtime.css">
+</head>
+<body>
+  <!-- Header Section -->
+  <header class="header">
+    <a href="../dashboard.html" class="back-btn">&#8592;</a>
+    <a href="#" class="chat-btn">
+      <img src="../assets/chat-icon.png" alt="Chat Icon">
+    </a>
+  </header>
+
+  <!-- Main Content -->
+  <section class="container">
+    <h2 class="subtitle">Available data networks to buy</h2>
+    <!-- Network Selection -->
+    <div class="input-group">
+      <label for="network" class="input-label">
+        <img src="../assets/mtn.png" alt="Network Icon" class="network-icon">
+        <span>MTN Network Selected</span>
+      </label>
+      <select id="network" name="network" class="input-field">
+        <option>MTN Network Selected</option>
+      </select>
+    </div>
+
+    <!-- Phone Number -->
+    <div class="input-group">
+      <label for="phone-number" class="label-text">Phone Number</label>
+      <input type="text" id="phone-number" placeholder="Enter Destination Phone Number" class="input-field">
+      <img src="./assets/phone-icon.png" alt="Phone Icon" class="field-icon">
+    </div>
+
+    <!-- Select Plan -->
+    <div class="input-group">
+      <label for="plan" class="label-text">Select Preferable Plan</label>
+      <select id="plan" name="plan" class="input-field">
+        <option>Choose your desired plan</option>
+      </select>
+    </div>
+
+    <!-- Amount to Pay -->
+    <div class="input-group">
+      <label for="amount" class="label-text">Amount to pay</label>
+      <input type="text" id="amount" value="₦ 0.00" class="input-field" readonly>
+      <img src="./assets/naira-icon.png" alt="Currency Icon" class="field-icon">
+    </div>
+
+    <!-- Continue Button -->
+    <button class="continue-btn">Continue to pay</button>
+  </section>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html" class="nav-item">
+      <img src="../assets/home.png" alt="Home">
+    </a>
+    <a href="#" class="nav-item">
+      <img src="../assets/notify.png" alt="Profile">
+    </a>
+    <a href="#" class="nav-item">
+      <img src="../assets/settings.png" alt="Settings">
+    </a>
+  </nav>
+</body>
+</html>

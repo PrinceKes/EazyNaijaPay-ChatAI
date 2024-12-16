@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Transaction Pin</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Inline styles for Pin Inputs */
+        .pin-inputs {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0 30px;
+        }
+
+        .pin-input {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #2683E5;
+            background-color: rgba(255, 255, 255, 0.8);
+            outline: none;
+        }
+
+        .pin-input:focus {
+            border-color: #4FD3A4;
+            box-shadow: 0 0 8px rgba(79, 211, 164, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="background">
+        <div class="register-container">
+            <!-- Logo -->
+            <div>
+                <img src="./assets/logo.png" alt="Logo" width="100px">
+            </div>
+
+            <!-- Title -->
+            <h2 style="color: white; margin-top: 15px;">Set your transaction Pin</h2>
+            <p style="color: rgba(255, 255, 255, 0.8); font-size: 14px;">
+                Input 4 digit Pin for all your transactions
+            </p>
+
+            <!-- PIN Input Fields -->
+            <div class="pin-inputs">
+                <input type="text" maxlength="1" class="pin-input" oninput="moveToNext(this, 'pin2')">
+                <input type="text" maxlength="1" class="pin-input" id="pin2" oninput="moveToNext(this, 'pin3')">
+                <input type="text" maxlength="1" class="pin-input" id="pin3" oninput="moveToNext(this, 'pin4')">
+                <input type="text" maxlength="1" class="pin-input" id="pin4">
+            </div>
+
+            <!-- Continue Button -->
+            <a href="dashboard.html">
+                <button class="continue-btn">Continue</button>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Function to move to the next input field
+        function moveToNext(current, nextID) {
+            if (current.value.length >= 1) {
+                document.getElementById(nextID).focus();
+            }
+        }
+    </script>
+</body>
+</html>
