@@ -37,62 +37,84 @@ function hashValue(value) {
 
 // Function to generate a virtual account (Paystack integration)
 async function generateVirtualAccount(phoneNumber, username) {
-  const PAYSTACK_API_KEY = "sk_live_b413933d1d3c91d10c6c3dfe5395bca5a86967f0";
-  const url = "https://api.paystack.co/dedicated_account";
-  const headers = { "Authorization": `Bearer ${PAYSTACK_API_KEY}` };
-  const payload = {
-    customer: {
-      email: `${username}@eazynai.com`,
-      phone: phoneNumber
-    },
-    preferred_bank: "wema-bank",
-    country: "NG",
-    account_name: username
-  };
+    const PAYSTACK_API_KEY = "sk_live_b413933d1d3c91d10c6c3dfe5395bca5a86967f0";
+    const url = "https://api.paystack.co/dedicated_account";
+    const headers = { "Authorization": `Bearer ${PAYSTACK_API_KEY}` };
+    const payload = {
+      customer: { email: `${username}@eazynai.com`, phone: phoneNumber },
+      preferred_bank: "wema-bank",
+      country: "NG",
+      account_name: username
+    };
   
-  try {
-    const response = await axios.post(url, payload, { headers });
-    if (response.status === 200) {
-      return response.data.data.account_number;
+    try {
+      const response = await axios.post(url, payload, { headers });
+      console.log("Paystack response:", response.data);
+  
+      if (response.status === 200 && response.data.data.account_number) {
+        return response.data.data.account_number;
+      } else {
+        console.error("Invalid Paystack response:", response.data);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error generating account:", error.response?.data || error.message);
+      return null;
     }
-    return null;
-  } catch (error) {
-    console.error('Error generating account:', error);
-    return null;
   }
-}
+  
+
+
+
 
 // User signup route
 app.post("/signup", async (req, res) => {
-  const { email, phone, username, password } = req.body;
+    try {
+      const { email, phone, username, password } = req.body;
   
-  if (!email || !phone || !username || !password) {
-    return res.status(400).json({ message: "Missing required fields" });
-  }
+      if (!email || !phone || !username || !password) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+  
+      const existingUser = await usersCollection.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ message: "User already exists" });
+      }
+  
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const accountNumber = await generateVirtualAccount(phone, username);
+  
+      if (!accountNumber) {
+        return res.status(500).json({ message: "Failed to generate virtual account" });
+      }
+  
+      const userData = {
+        email,
+        phone,
+        username,
+        password: hashedPassword,
+        pin: null,
+        accountNumber,
+        accountBalance: 0,
+        transactions: [],
+        createdAt: new Date()
+      };
+  
+      await usersCollection.insertOne(userData);
+      return res.status(201).json({
+        message: "Signup successful",
+        accountNumber,
+        redirect: "set-pin.html"
+      });
+    } catch (error) {
+      console.error("Signup error:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  });
+  
 
-  const existingUser = await usersCollection.findOne({ email });
-  if (existingUser) {
-    return res.status(400).json({ message: "User already exists" });
-  }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const accountNumber = await generateVirtualAccount(phone, username);
 
-  const userData = {
-    email,
-    phone,
-    username,
-    password: hashedPassword,
-    pin: null,
-    accountNumber,
-    accountBalance: 0,
-    transactions: [],
-    createdAt: new Date()
-  };
-
-  await usersCollection.insertOne(userData);
-  return res.status(201).json({ message: "Signup successful", accountNumber, redirect: "set-pin.html" });
-});
 
 // Set pin route
 app.post("/set-pin", async (req, res) => {

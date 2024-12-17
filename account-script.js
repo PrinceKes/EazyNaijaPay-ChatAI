@@ -13,23 +13,27 @@ async function signup(event) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, phone, username, password })
     });
-
+  
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(errorText || 'Something went wrong');
     }
-
+  
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      throw new Error("Invalid response format. Expected JSON.");
+    }
+  
     const data = await response.json();
     console.log('Success:', data);
-
+  
     // Redirect to set-pin.html after successful signup
-    window.location.href = '/set-pin.html';
+    window.location.href = data.redirect || '/set-pin.html';
   } catch (error) {
     console.error('Signup failed:', error);
     alert('Error: ' + error.message);
   }
-}
-
+}  
 document.getElementById('signupForm')?.addEventListener('submit', signup);
 
 // Function to handle PIN setup
