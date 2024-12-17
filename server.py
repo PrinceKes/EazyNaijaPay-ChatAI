@@ -4,19 +4,31 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 import requests
 import hashlib
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
-# MongoDB connection
+@app.route("/")
+def home():
+    return "Welcome to EazyNaijaPay Server!"
+
+@app.route("/favicon.ico")
+def favicon():
+    return "", 204  
+
+@app.route("/api/health")
+def health():
+    return jsonify({"status": "ok"})
+
+
 client = MongoClient("mongodb+srv://EazyNaijaPay:Adeboye2003@eazynaijapay.asnqh.mongodb.net/EazyNaijaPay-App?retryWrites=true&w=majority&appName=EazyNaijaPay")
 db = client["EazyNaijaPay"]
 users_collection = db["RegisteredUsers"]
 
-# Utility: Hash PIN
 def hash_value(value):
     return hashlib.sha256(value.encode()).hexdigest()
 
-# Function: Generate virtual account using Paystack
 def generate_virtual_account(phone_number, username):
     PAYSTACK_API_KEY = "sk_live_b413933d1d3c91d10c6c3dfe5395bca5a86967f0"
     url = "https://api.paystack.co/dedicated_account"
@@ -38,7 +50,13 @@ def generate_virtual_account(phone_number, username):
 # Endpoint: User Signup
 @app.route("/signup", methods=["POST"])
 def signup():
-    data = request.json
+    if not request.is_json:
+        return jsonify({"message": "Invalid request format. JSON expected"}), 400
+    
+    data = request.get_json()  # Safely get JSON data
+    if not all(field in data for field in ["email", "phone", "username", "password"]):
+        return jsonify({"message": "Missing required fields"}), 400
+    
     email = data.get("email")
     phone = data.get("phone")
     username = data.get("username")
@@ -67,7 +85,10 @@ def signup():
 # Endpoint: Set PIN
 @app.route("/set-pin", methods=["POST"])
 def set_pin():
-    data = request.json
+    if not request.is_json:
+        return jsonify({"message": "Invalid request format. JSON expected"}), 400
+    
+    data = request.get_json()  # Safely get JSON data
     email = data.get("email")
     pin = data.get("pin")
 
@@ -81,9 +102,15 @@ def set_pin():
 # Endpoint: Login
 @app.route("/login", methods=["POST"])
 def login():
-    data = request.json
+    if not request.is_json:
+        return jsonify({"message": "Invalid request format. JSON expected"}), 400
+    
+    data = request.get_json()  # Safely get JSON data
     email = data.get("email")
     password = data.get("password")
+
+    if not email or not password:
+        return jsonify({"message": "Email and password are required"}), 400
 
     user = users_collection.find_one({"email": email})
     if user and check_password_hash(user["password"], password):
@@ -93,9 +120,15 @@ def login():
 # Endpoint: Update Balance (Manual)
 @app.route("/update_balance", methods=["POST"])
 def update_balance():
-    data = request.json
+    if not request.is_json:
+        return jsonify({"message": "Invalid request format. JSON expected"}), 400
+    
+    data = request.get_json()  # Safely get JSON data
     user_id = data.get("user_id")
     amount = data.get("amount")
+
+    if not user_id or amount is None:
+        return jsonify({"message": "User ID and amount are required"}), 400
 
     users_collection.update_one(
         {"_id": user_id},
@@ -107,7 +140,10 @@ def update_balance():
 # Endpoint: Paystack Webhook (Automatic Balance Update)
 @app.route("/paystack_webhook", methods=["POST"])
 def paystack_webhook():
-    payload = request.json
+    if not request.is_json:
+        return jsonify({"message": "Invalid request format. JSON expected"}), 400
+    
+    payload = request.get_json()  # Safely get JSON data
     account_number = payload["data"]["customer"]["account_number"]
     amount = payload["data"]["amount"] / 100  # Convert kobo to naira
 

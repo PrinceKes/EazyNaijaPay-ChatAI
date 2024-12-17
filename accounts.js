@@ -11,14 +11,17 @@ async function signup(event) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, phone, username, password })
     });
-  
-    const data = await response.json();
-    if (response.ok) {
-      alert(data.message);
-      window.location.href = data.redirect;
-    } else {
-      alert(data.message);
+    
+    // Check if the response is valid (status code 200-299)
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Error:', errorData.message);
+      throw new Error(errorData.message || 'Something went wrong');
     }
+    
+    // If the response is valid, process the JSON data
+    const data = await response.json();
+    console.log('Success:', data);
   }
   
   async function setPin(event) {
