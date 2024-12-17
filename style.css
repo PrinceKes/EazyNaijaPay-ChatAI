@@ -36,20 +36,20 @@
   
   /* Heading */
   h2 {
-    color: #000000;
+    color: #f1f1f1;
     font-size: 20px;
     margin-bottom: 5px;
   }
   
   .signin-text {
-    color: #666;
+    color: #f7f7f7;
     font-size: 12px;
     margin-bottom: 20px;
   }
   
   .signin-text a {
     text-decoration: none;
-    color: #2683E5;
+    color: #00ff80;
     font-weight: bold;
   }
   
@@ -61,7 +61,7 @@
   
   label {
     text-align: left;
-    color: #555;
+    color: #d3d3d3;
     font-size: 12px;
     margin-bottom: 5px;
   }

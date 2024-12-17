@@ -3,90 +3,43 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
-  <link rel="stylesheet" href="dashboard.css">
+  <title>Register as a New User</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Top Hero Section -->
-  <header class="hero">
-    <div class="hero-content">
-      <p>Hi John 👋</p>
-      <small>What bill did you want to go for today?</small>
-    </div>
-    <div class="balance-card">
-      <p class="balance-text">Available Balance</p>
-      <h2>10,200 NGN</h2>
-      <img src="assets/atm.png" alt="ATM Icon" class="atm-icon">
-      <img src="./assets/master.png" alt="Mastercard" class="mastercard-icon">
-      <button class="topup-btn">
-        <a href="./pages/funding.html">
-         Top Up +
-        </a>
-      </button>
-    </div>
-  </header>
-  
 
-  <!-- Services Section -->
-  <section class="services">
-    <h3>Our Services</h3>
-    <div class="services-container">
-      <div class="service-card" onclick="location.href='./pages/buy-data.html'">
-        <img src="assets/data.png" alt="Data Pack">
-        <p>Data Pack</p>
-      </div>
-      <div class="service-card" onclick="location.href='./pages/buy-airtime.html'">
-        <img src="assets/airtime.png" alt="Airtime">
-        <p>Airtime</p>
-      </div>
-      <div class="service-card" onclick="location.href='./pages/Betting.html'">
-        <img src="assets/bet.png" alt="Betting">
-        <p>Betting</p>
-      </div>
-    </div>
-  </section>
+  <div class="background">
 
-  <!-- Recent Activities -->
-  <section class="recent-activities">
-    <div class="activity-header">
-      <h3>Recent Activities</h3>
-      <a href="./pages/notification.html">View All</a>
-    </div>
-    <div class="activities-list">
-      <div class="activity-card">
-        <h4>Top Up Successful</h4>
-        <p>You have successfully funded your account with 5,000 NGN</p>
-        <span>Wednesday 02:05 PM</span>
-      </div>
-      <div class="activity-card">
-        <h4>Data Purchase Successful</h4>
-        <p>You have bought 3gb MTN Data worth for 07061389708</p>
-        <span>Monday 03:10 PM</span>
-      </div>
-      <div class="activity-card">
-        <h4>Airtime Purchase Successful</h4>
-        <p>You have bought 1,200 Airtime worth for 08071389471</p>
-        <span>Tuesday 12:25 PM</span>
-      </div>
-      <div class="activity-card failed">
-        <h4>Failed Transaction</h4>
-        <p>Your transaction has failed due to insufficient balance</p>
-        <span>Tuesday 01:23 AM</span>
-      </div>
-    </div>
-  </section>
+    <div class="register-container">
 
-  <!-- Bottom Navbar -->
-  <nav class="bottom-navbar">
-    <a href="#" class="nav-link active">
-      <img src="assets/home.png" alt="Home">
-    </a>
-    <a href="./pages/notification.html" class="nav-link">
-      <img src="assets/notify.png" alt="Notifications">
-    </a>
-    <a href="./pages/settings.html" class="nav-link">
-      <img src="assets/settings.png" alt="Settings">
-    </a>
-  </nav>
+      <div class="logo">
+        <img src="assets/logo.png" alt="Logo"> 
+      </div>
+
+      <h2>Register as a new user</h2>
+      <p class="signin-text">Are you a new user? <a href="./signup.html">SignUp</a></p>
+
+      <form>
+
+        <label for="email">Email or Username</label>
+        <input type="email" id="email" placeholder="John@gmail.com" required>
+
+        <label for="password">Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="password" placeholder="Enter password" required>
+          <!-- <span class="eye-icon" onclick="togglePassword()">&#128065;</span> -->
+          <span class="eye-icon" onclick="togglePassword()"></span>
+        </div>
+
+        <!-- <button type="submit" class="continue-btn"> <a href="./pin.html"></a> Continue</button> -->
+        <button type="submit" class="continue-btn"> 
+            <a href="set-pin.html"></a> Continue
+        </button>
+
+        
+      </form>
+    </div>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
