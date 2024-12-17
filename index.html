@@ -19,7 +19,7 @@
       <h2>Register as a new user</h2>
       <p class="signin-text">Are you a new user? <a href="./signup.html">SignUp</a></p>
 
-      <form>
+      <form onsubmit="login(event)">
 
         <label for="email">Email or Username</label>
         <input type="email" id="email" placeholder="John@gmail.com" required>
@@ -27,19 +27,15 @@
         <label for="password">Password</label>
         <div class="password-wrapper">
           <input type="password" id="password" placeholder="Enter password" required>
-          <!-- <span class="eye-icon" onclick="togglePassword()">&#128065;</span> -->
           <span class="eye-icon" onclick="togglePassword()"></span>
         </div>
-
-        <!-- <button type="submit" class="continue-btn"> <a href="./pin.html"></a> Continue</button> -->
-        <button type="submit" class="continue-btn"> 
-            <a href="set-pin.html"></a> Continue
-        </button>
-
-        
+        <!-- <button type="submit" class="continue-btn"> 
+            <a href="Dashboard.html"></a> Continue
+        </button> -->
+        <button type="submit" class="continue-btn">Login</button>        
       </form>
     </div>
   </div>
-  <script src="script.js"></script>
+  <script src="accounts.js"></script>
 </body>
 </html>
