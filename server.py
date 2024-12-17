@@ -55,7 +55,7 @@ def signup():
     
     data = request.get_json()  # Safely get JSON data
     if not all(field in data for field in ["email", "phone", "username", "password"]):
-        return jsonify({"message": "Missing required fields"}), 400
+        return jsonify({"message": "Signup successful", "redirect": "set-pin.html"}), 201
     
     email = data.get("email")
     phone = data.get("phone")
