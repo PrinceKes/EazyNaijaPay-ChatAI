@@ -96,4 +96,8 @@ function togglePassword() {
   const passwordInput = document.getElementById('password');
   const type = passwordInput.type === 'password' ? 'text' : 'password';
   passwordInput.type = type;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 56a99e657f023e70a5d42541c2d7287f3d63c7aa
