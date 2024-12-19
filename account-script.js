@@ -1,7 +1,9 @@
+const SERVER_URL = 'https://eazynaijapay-server.onrender.com'; // Absolute server URL
+
 // Helper function to send POST requests
-async function postData(url = '', data = {}) {
+async function postData(endpoint = '', data = {}) {
   try {
-    const response = await fetch(url, {
+    const response = await fetch(`${SERVER_URL}${endpoint}`, { // Updated to use absolute server URL
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -29,7 +31,7 @@ document.getElementById('signupForm')?.addEventListener('submit', async (event) 
 
   try {
     const data = { email, phone, username, password };
-    const result = await postData('/signup', data);
+    const result = await postData('/signup', data); // Endpoint remains relative to SERVER_URL
     alert(result.message);
 
     if (result.redirect) {
@@ -49,7 +51,7 @@ document.getElementById('login')?.addEventListener('submit', async (event) => {
 
   try {
     const data = { email, password };
-    const result = await postData('/login', data);
+    const result = await postData('/login', data); // Endpoint remains relative to SERVER_URL
     alert(result.message);
 
     if (result.redirect) {
@@ -80,7 +82,7 @@ async function setPin(event) {
 
   try {
     const data = { email, pin };
-    const result = await postData('/set-pin', data);
+    const result = await postData('/set-pin', data); // Endpoint remains relative to SERVER_URL
     alert(result.message);
 
     if (result.redirect) {
