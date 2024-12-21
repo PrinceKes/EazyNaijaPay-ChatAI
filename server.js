@@ -106,6 +106,41 @@ app.post('/signup', async (req, res) => {
   }
 });
 
+
+
+// Set PIN route
+app.post('/set-pin', async (req, res) => {
+  try {
+    const { pin } = req.body;
+
+    if (!pin || pin.length !== 4) {
+      return res.status(400).json({ message: 'Invalid PIN' });
+    }
+
+    const hashedPin = hashValue(pin);
+
+    // Assuming you track the currently logged-in user (use a session/token)
+    const userId = req.session?.userId || req.headers['x-user-id']; // Example approach
+    if (!userId) {
+      return res.status(403).json({ message: 'Unauthorized' });
+    }
+
+    await usersCollection.updateOne(
+      { _id: new MongoClient.ObjectId(userId) },
+      { $set: { pin: hashedPin } }
+    );
+
+    res.status(200).json({ message: 'PIN set successfully' });
+  } catch (error) {
+    console.error('Set PIN error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+
+
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
