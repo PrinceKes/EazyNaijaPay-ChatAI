@@ -62,6 +62,7 @@ async function generateVirtualAccount(phoneNumber, username) {
 }
 
 // Signup route
+// Signup route
 app.post('/signup', async (req, res) => {
   try {
     const { email, phone, username, password } = req.body;
@@ -102,9 +103,10 @@ app.post('/signup', async (req, res) => {
     });
   } catch (error) {
     console.error('Signup error:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 });
+
 
 
 
