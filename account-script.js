@@ -1,7 +1,7 @@
 // Handle signup form submission
 document.getElementById('signupForm').addEventListener('submit', async (event) => {
   event.preventDefault();
-  
+
   const email = document.getElementById('email').value;
   const phone = document.getElementById('phone').value;
   const username = document.getElementById('username').value;
@@ -16,11 +16,13 @@ document.getElementById('signupForm').addEventListener('submit', async (event) =
       body: JSON.stringify(userData),
     });
 
-    const result = await response.json();
+    // Check if response is JSON
     if (response.ok) {
+      const result = await response.json();
       alert('Signup successful. Redirecting to set PIN...');
       window.location.href = result.redirect;
     } else {
+      const result = await response.json().catch(() => ({})); // Fallback for empty response
       alert(result.message || 'Signup failed. Please try again.');
     }
   } catch (error) {
@@ -28,6 +30,7 @@ document.getElementById('signupForm').addEventListener('submit', async (event) =
     alert('An error occurred. Please try again.');
   }
 });
+
 
 // Handle PIN setting form submission
 document.getElementById('setPinForm').addEventListener('submit', async (event) => {
