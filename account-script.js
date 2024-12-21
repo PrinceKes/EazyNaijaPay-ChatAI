@@ -1,44 +1,67 @@
-const SERVER_URL = 'https://eazynaijapay-server.onrender.com';
+// Handle signup form submission
+document.getElementById('signupForm').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  
+  const email = document.getElementById('email').value;
+  const phone = document.getElementById('phone').value;
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
 
-// Helper function to send POST requests
-async function postData(endpoint = '', data = {}) {
+  const userData = { email, phone, username, password };
+
   try {
-    const response = await fetch(`${SERVER_URL}${endpoint}`, {
+    const response = await fetch('/signup', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userData),
     });
 
-    if (!response.ok) throw new Error(`Error: ${response.statusText}`);
-    return await response.json();
-  } catch (error) {
-    console.error('Fetch error:', error.message);
-    alert(`Error: ${error.message}`);
-    throw error;
-  }
-}
-
-// Handle user signup
-document.getElementById('signupForm')?.addEventListener('submit', async (event) => {
-  event.preventDefault();
-
-  const email = document.getElementById('email').value.trim();
-  const phone = document.getElementById('phone').value.trim();
-  const username = document.getElementById('username').value.trim();
-  const password = document.getElementById('password').value.trim();
-
-  try {
-    const data = { email, phone, username, password };
-    const result = await postData('/signup', data);
-    alert(result.message);
-
-    if (result.redirect) {
+    const result = await response.json();
+    if (response.ok) {
+      alert('Signup successful. Redirecting to set PIN...');
       window.location.href = result.redirect;
+    } else {
+      alert(result.message || 'Signup failed. Please try again.');
     }
   } catch (error) {
-    console.error('Signup failed:', error.message);
+    console.error('Error during signup:', error);
+    alert('An error occurred. Please try again.');
+  }
+});
+
+// Handle PIN setting form submission
+document.getElementById('setPinForm').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  
+  const pin = [
+    document.getElementById('pin1').value,
+    document.getElementById('pin2').value,
+    document.getElementById('pin3').value,
+    document.getElementById('pin4').value,
+  ].join('');
+
+  if (pin.length !== 4 || isNaN(pin)) {
+    alert('PIN must be a 4-digit number.');
+    return;
+  }
+
+  try {
+    const response = await fetch('/set-pin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pin }),
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      alert('PIN set successfully. You can now log in.');
+      window.location.href = 'index.html';
+    } else {
+      alert(result.message || 'Failed to set PIN. Please try again.');
+    }
+  } catch (error) {
+    console.error('Error during PIN setting:', error);
+    alert('An error occurred. Please try again.');
   }
 });
 
