@@ -7,11 +7,8 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
   <div class="background">
-
     <div class="register-container">
-
       <div class="logo">
         <img src="assets/logo.png" alt="Logo"> 
       </div>
@@ -19,18 +16,17 @@
       <h2>Register as a new user</h2>
       <p class="signin-text">Already have an account? <a href="index.html">Sign In</a></p>
 
-      <!-- Changed form submission to call signup(event) -->
       <form id="signupForm">
-        <label for="email">Email Address</label>
+        <label for="email" id="label-email">Email Address</label>
         <input type="email" id="email" placeholder="John@gmail.com" required>
 
-        <label for="phone">Phone Number</label>
-        <input type="phone" id="phone" placeholder="07032000000" required>
+        <label for="phone" id="label-phone">Phone Number</label>
+        <input type="text" id="phone" placeholder="07032000000" required>
 
-        <label for="username">Username</label>
+        <label for="username" id="label-username">Username</label>
         <input type="text" id="username" placeholder="John-Doe" required>
 
-        <label for="password">Password</label>
+        <label for="password" id="label-password">Password</label>
         <div class="password-wrapper">
           <input type="password" id="password" placeholder="Enter password" required>
           <span class="eye-icon" onclick="togglePassword()"></span>
