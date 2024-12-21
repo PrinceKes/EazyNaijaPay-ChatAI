@@ -34,7 +34,6 @@
 <body>
     <div class="background">
         <div class="register-container">
-            <!-- Logo -->
             <div>
                 <img src="./assets/logo.png" alt="Logo" width="100px">
             </div>
@@ -44,26 +43,19 @@
                 Input 4 digit Pin for all your transactions
             </p>
 
-            <div class="pin-inputs">
-                <input type="text" maxlength="1" class="pin-input" oninput="moveToNext(this, 'pin2')">
-                <input type="text" maxlength="1" class="pin-input" id="pin2" oninput="moveToNext(this, 'pin3')">
-                <input type="text" maxlength="1" class="pin-input" id="pin3" oninput="moveToNext(this, 'pin4')">
-                <input type="text" maxlength="1" class="pin-input" id="pin4">
-            </div>
+            <form id="setPinForm">
+                <div class="pin-inputs">
+                    <input type="text" maxlength="1" class="pin-input" oninput="moveToNext(this, 'pin2')" id="pin1">
+                    <input type="text" maxlength="1" class="pin-input" id="pin2" oninput="moveToNext(this, 'pin3')">
+                    <input type="text" maxlength="1" class="pin-input" id="pin3" oninput="moveToNext(this, 'pin4')">
+                    <input type="text" maxlength="1" class="pin-input" id="pin4">
+                </div>
 
-            <button class="continue-btn" onclick="setPin(event)">Submit</button>
-
+                <button type="submit" class="continue-btn">Submit</button>
+            </form>
         </div>
     </div>
 
-    <script>
-        // Function to move to the next input field
-        function moveToNext(current, nextID) {
-            if (current.value.length >= 1) {
-                document.getElementById(nextID).focus();
-            }
-        }
-    </script>
     <script src="account-script.js"></script>
 </body>
 </html>
