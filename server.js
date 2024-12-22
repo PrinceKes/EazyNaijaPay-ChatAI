@@ -60,23 +60,34 @@ async function generateVirtualAccount(phone, username) {
 }
 
 // Signup route
+
+
+
 app.post('/signup', async (req, res) => {
   const { email, phone, username, password } = req.body;
 
   if (!email || !phone || !username || !password) {
+    console.error('Missing fields in request:', req.body);
     return res.status(400).json({ message: 'All fields are required.' });
   }
 
   try {
+    console.log('Checking if user exists...');
     const existingUser = await usersCollection.findOne({ email });
+
     if (existingUser) {
+      console.error('User already exists:', email);
       return res.status(400).json({ message: 'User already exists.' });
     }
 
+    console.log('Hashing password...');
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    console.log('Generating virtual account...');
     const accountNumber = await generateVirtualAccount(phone, username);
 
     if (!accountNumber) {
+      console.error('Failed to generate virtual account.');
       return res.status(500).json({ message: 'Failed to generate virtual account.' });
     }
 
@@ -92,13 +103,18 @@ app.post('/signup', async (req, res) => {
       createdAt: new Date(),
     };
 
+    console.log('Inserting user into database...');
     await usersCollection.insertOne(userData);
+
+    console.log('Signup successful:', email);
     res.status(201).json({ message: 'Signup successful', redirect: 'set-pin.html' });
   } catch (error) {
     console.error('Signup error:', error);
     res.status(500).json({ message: 'Internal server error.' });
   }
 });
+
+
 
 // Set PIN route
 app.post('/set-pin', async (req, res) => {
