@@ -1,10 +1,10 @@
 document.getElementById('login').addEventListener('submit', async (e) => {
-    e.preventDefault(); // Prevent the default form submission behavior
+    e.preventDefault();
   
     console.log("Login form submitted");
   
     // Get user input
-    const user_id = localStorage.getItem('user_id'); // Ensure user_id is saved in localStorage
+    const user_id = localStorage.getItem('user_id');
     const email = document.getElementById('email').value.trim();
     const pinInputs = document.querySelectorAll('.pin-input');
     const pin = Array.from(pinInputs).map(input => input.value).join('');
@@ -12,12 +12,7 @@ document.getElementById('login').addEventListener('submit', async (e) => {
     console.log("Inputs captured:", { user_id, email, pin });
   
     // Validate inputs
-    if (!user_id) {
-      alert('User ID is missing. Please ensure you are registered.');
-      console.log("User ID missing");
-      return;
-    }
-    if (!email || pin.length !== 4) {
+    if (!user_id || !email || pin.length !== 4) {
       alert('Please fill in all fields correctly.');
       console.log("Validation failed");
       return;
@@ -33,12 +28,18 @@ document.getElementById('login').addEventListener('submit', async (e) => {
         body: JSON.stringify({ user_id, email, pin }),
       });
   
+      if (!response.ok) {
+        console.error('Server returned an error:', response.status);
+        alert(`Error: ${response.statusText}`);
+        return;
+      }
+  
       const data = await response.json();
       console.log("Server response:", data);
   
       if (data.success) {
         console.log("Login successful, redirecting to Dashboard.html");
-        window.location.href = '/Dashboard.html'; // Redirect on successful login
+        window.location.href = '/Dashboard.html';
       } else {
         alert(data.message); // Show error message from server
         console.log("Login failed:", data.message);
