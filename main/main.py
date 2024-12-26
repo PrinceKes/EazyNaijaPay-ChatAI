@@ -190,7 +190,7 @@ async def handle_registration(update: Update, context: ContextTypes.DEFAULT_TYPE
             })
 
             # Notify the user of successful registration
-            keyboard = [[InlineKeyboardButton("Log In to App", web_app=WebAppInfo(url="https://your-mini-app-url.com"))]]
+            keyboard = [[InlineKeyboardButton("Log In to App", web_app=WebAppInfo(url="https://eazynaijapay-app.onrender.com?user_id={user_id}"))]]
             reply_markup = InlineKeyboardMarkup(keyboard)
             await update.message.reply_text(
                 f"Congratulations 🎉! Your account has been successfully created. Your account number is: {account_number} ({bank_name}).\n\nYou can log in to your account using your email along with your PIN. Click the button below to open the app.", 
