@@ -18,30 +18,30 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 // Define User Schema and Model
 const userSchema = new mongoose.Schema({
   _id: String,
-  userId: String,
-  email: String,
-  userPin: String,
-  // other fields as needed...
+  User_id: String,
+  Email: String,
+  User_pin: String,
+  // Other fields as needed...
 });
 const User = mongoose.model('Verified_Users', userSchema);
 
 // Login Route
 app.post('/login', async (req, res) => {
-    const { user_id, email, pin } = req.body;
-  
-    try {
-      const user = await User.findOne({ User_id: user_id, Email: email, User_pin: pin });
-  
-      if (user) {
-        return res.status(200).json({ success: true, message: 'Login successful' });
-      } else {
-        return res.status(401).json({ success: false, message: 'Invalid credentials' });
-      }
-    } catch (error) {
-      console.error('Error during login:', error);
-      return res.status(500).json({ success: false, message: 'Server error' });
+  const { user_id, email, pin } = req.body;
+
+  try {
+    const user = await User.findOne({ User_id: user_id, Email: email, User_pin: pin });
+
+    if (user) {
+      return res.status(200).json({ success: true, message: 'Login successful' });
+    } else {
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
-  });
+  } catch (error) {
+    console.error('Error during login:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
 
 // Start Server
 const PORT = process.env.PORT || 5000;
