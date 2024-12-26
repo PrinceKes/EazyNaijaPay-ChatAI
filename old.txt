@@ -33,8 +33,7 @@
                 </div>
             </form>
             
-            <button type="submit" class="continue-btn">Login</button> 
-            <div class="user-id" id="User_id">Loading</div>      
+            <button type="submit" class="continue-btn">Login</button>        
         </form>
     </div>
   </div>

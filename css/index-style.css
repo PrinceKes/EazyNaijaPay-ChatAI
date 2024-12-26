@@ -133,3 +133,10 @@
     border-color: #4FD3A4;
     box-shadow: 0 0 8px rgba(79, 211, 164, 0.8);
 }
+
+.user-id{
+    display: block;
+    background-color: #d3d3d3;
+    border-radius: 15px;
+    margin-top: 15px;
+}
