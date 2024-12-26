@@ -65,7 +65,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"Hi @{username}, it's nice to have you here. Press the button below to proceed.", reply_markup=reply_markup)
     else:
         # Welcome back message with app login option
-        keyboard = [[InlineKeyboardButton("Log In to App", web_app=WebAppInfo(url="https://eazynaijapay-app.onrender.com"))]]
+        keyboard = [[InlineKeyboardButton("Log In to App", web_app=WebAppInfo(url="https://eazynaijapay-app.onrender.com?user_id={user_id}"))]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(f"Hey @{username}, welcome back! It's a nice warm weather today ☀️. Click the button below to proceed.", reply_markup=reply_markup)
 
