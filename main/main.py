@@ -3,6 +3,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppI
 from telegram.ext import (
     Application, CommandHandler, CallbackQueryHandler, MessageHandler, ContextTypes, filters
 )
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
 from pymongo import MongoClient
 import requests
 from datetime import datetime
@@ -62,12 +63,39 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         # Prompt the user to register an account
         keyboard = [[InlineKeyboardButton("Register an Account", callback_data="register_my_account")]]
         reply_markup = InlineKeyboardMarkup(keyboard)
-        await update.message.reply_text(f"Hi @{username}, it's nice to have you here. Press the button below to proceed.", reply_markup=reply_markup)
+        await update.message.reply_text(
+            f"Hi @{username}, it's nice to have you here. Press the button below to proceed.",
+            reply_markup=reply_markup
+        )
     else:
         # Welcome back message with app login option
-        keyboard = [[InlineKeyboardButton("Log In to App", web_app=WebAppInfo(url="https://eazynaijapay-app.onrender.com/?user_id={user_id}"))]]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        await update.message.reply_text(f"Hey @{username}, welcome back! It's a nice warm weather today ☀️. Click the button below to proceed.", reply_markup=reply_markup)
+        await send_login_message(update, context)
+        # Send login message function
+async def send_login_message(update, context):
+    """
+    Send a login message with a dynamic user ID in the URL.
+    """
+    user_id = update.effective_user.id
+    username = update.effective_user.username or "User"  # Use "User" if no username is set
+
+    # Dynamically inject the user_id into the URL
+    login_url = f"https://eazynaijapay-app.onrender.com/?user_id={user_id}"
+
+    # Create the inline keyboard with the dynamic URL
+    keyboard = [[InlineKeyboardButton("Log In to App", web_app=WebAppInfo(url=login_url))]]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    # Send the message
+    await update.message.reply_text(
+        f"Hey @{username}, welcome back! It's a nice warm weather today ☀️. Click the button below to proceed.",
+        reply_markup=reply_markup
+    )
+
+
+
+
+
+
 
 # /register_an_account command handler
 async def register_an_account(update: Update, context: ContextTypes.DEFAULT_TYPE):

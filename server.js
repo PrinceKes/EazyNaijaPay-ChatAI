@@ -25,23 +25,27 @@ const userSchema = new mongoose.Schema({
 });
 const User = mongoose.model('Verified_Users', userSchema);
 
-// Login Route
 app.post('/login', async (req, res) => {
-  const { user_id, email, pin } = req.body;
-
-  try {
-    const user = await User.findOne({ User_id: user_id, Email: email, User_pin: pin });
-
-    if (user) {
-      return res.status(200).json({ success: true, message: 'Login successful' });
-    } else {
-      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    const { user_id, email, pin } = req.body;
+  
+    if (!user_id || !email || !pin) {
+      return res.status(400).json({ success: false, message: 'All fields are required.' });
     }
-  } catch (error) {
-    console.error('Error during login:', error);
-    return res.status(500).json({ success: false, message: 'Server error' });
-  }
-});
+  
+    try {
+      const user = await User.findOne({ User_id: user_id, Email: email, User_pin: pin });
+  
+      if (user) {
+        return res.status(200).json({ success: true, message: 'Login successful' });
+      } else {
+        return res.status(401).json({ success: false, message: 'Invalid credentials' });
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      return res.status(500).json({ success: false, message: 'Server error' });
+    }
+  });
+  
 
 // Start Server
 const PORT = process.env.PORT || 5000;
