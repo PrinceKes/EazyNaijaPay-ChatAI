@@ -1,85 +1,50 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
-const axios = require("axios");
-const AllProfiles = require("./models/allprofiles");
-
+// server.js
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const path = require('path');
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
-// MongoDB connection
-const MONGO_URI = "mongodb+srv://EazyNaijaPay:Adeboye2003@eazynaijapay.asnqh.mongodb.net/EazyNaijaPay-App?retryWrites=true&w=majority&appName=EazyNaijaPay";
+// MongoDB Connection
+const MONGO_URI = "mongodb+srv://EazyNaijaPay:Ade2003@eazynaijapay.asnqh.mongodb.net/EazyNaijaPay_Bot?retryWrites=true&w=majority";
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log("MongoDB connected"))
-    .catch(err => console.error("MongoDB connection error:", err));
+  .then(() => console.log('MongoDB Connected'))
+  .catch((err) => console.error('MongoDB connection error:', err));
 
-// Paystack API Key
-const PAYSTACK_API_KEY = "sk_live_b413933d1d3c91d10c6c3dfe5395bca5a86967f0";
+// Define User Schema and Model
+const userSchema = new mongoose.Schema({
+  _id: String,
+  User_id: String,
+  Email: String,
+  User_pin: String,
+  // other fields as needed...
+});
+const User = mongoose.model('Verified_Users', userSchema);
 
-// API to create user profile
-app.post("/create-profile", async (req, res) => {
-    try {
-        const { email, phone, username, pin } = req.body;
+// Login Route
+app.post('/login', async (req, res) => {
+  const { user_id, email, pin } = req.body;
 
-        // Validate inputs
-        if (!email || !phone || !username || !pin) {
-            return res.status(400).json({ error: "All fields are required" });
-        }
+  try {
+    const user = await User.findOne({ User_id: user_id, Email: email, User_pin: pin });
 
-        // Check if the user already exists
-        const existingUser = await AllProfiles.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ error: "User already exists" });
-        }
-
-        // Generate an account number using Paystack API
-        const response = await axios.post(
-            "https://api.paystack.co/dedicated_account",
-            {
-                customer: {
-                    email: email,
-                    phone: phone,
-                },
-                preferred_bank: "wema-bank",
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${PAYSTACK_API_KEY}`,
-                    "Content-Type": "application/json",
-                },
-            }
-        );
-
-        const accountNumber = response.data.data.account_number;
-
-        // Create new user profile
-        const newUser = new AllProfiles({
-            email,
-            phone,
-            username,
-            pin,
-            accountNumber,
-            accountBalance: 0,
-            transactions: [],
-            UserIP: req.ip,
-        });
-
-        await newUser.save();
-
-        return res.status(201).json({
-            message: "User profile created successfully",
-            accountNumber,
-        });
-    } catch (error) {
-        console.error("Error creating profile:", error);
-        return res.status(500).json({ error: "Server error occurred" });
+    if (user) {
+      return res.status(200).json({ success: true, message: 'Login successful' });
+    } else {
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
+  } catch (error) {
+    console.error('Error during login:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
 });
 
-// Server startup
+// Start Server
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
