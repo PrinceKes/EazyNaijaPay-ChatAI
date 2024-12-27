@@ -1,18 +1,17 @@
-// Wait for the DOM to fully load
+// fund_acct.js
+
 window.addEventListener('DOMContentLoaded', async () => {
-    // Retrieve the User ID from local storage
+    // Get the User_id from localStorage
     const user_id = localStorage.getItem('user_id');
   
     if (!user_id) {
       alert('User ID not found. Please log in again.');
-      window.location.href = '/login.html';
+      window.location.href = '/login.html'; // Redirect to login if User_id is missing
       return;
     }
   
-    console.log(`User ID loaded: ${user_id}`); // Debugging log
-  
     try {
-      // Make a request to fetch the user's account number
+      // Fetch the account number from the server
       const response = await fetch(`/Verified_Users/${user_id}/Account_number`);
   
       if (!response.ok) {
@@ -21,14 +20,24 @@ window.addEventListener('DOMContentLoaded', async () => {
         return;
       }
   
-      // Parse the response as JSON
+      // Parse the response
       const { success, account_number } = await response.json();
   
       if (success && account_number) {
-        // Update the account number in the HTML
+        // Update the HTML with the fetched account number
         const accountNumberElement = document.getElementById('Account_number');
         if (accountNumberElement) {
           accountNumberElement.textContent = account_number;
+        }
+  
+        // Add copy-to-clipboard functionality
+        const copyButton = document.querySelector('.copy-btn');
+        if (copyButton) {
+          copyButton.addEventListener('click', () => {
+            navigator.clipboard.writeText(account_number)
+              .then(() => alert('Account number copied to clipboard!'))
+              .catch((err) => console.error('Failed to copy account number:', err));
+          });
         }
       } else {
         alert('Unable to retrieve account number. Please contact support.');
@@ -37,24 +46,5 @@ window.addEventListener('DOMContentLoaded', async () => {
       console.error('Error fetching account number:', error);
       alert('An error occurred while retrieving the account number. Please try again later.');
     }
-  
-    // Add functionality to the "Copy" button
-    const copyButton = document.querySelector('.copy-btn');
-    copyButton.addEventListener('click', () => {
-      const accountNumberElement = document.getElementById('Account_number');
-      const accountNumber = accountNumberElement.textContent;
-  
-      if (accountNumber) {
-        // Copy account number to clipboard
-        navigator.clipboard.writeText(accountNumber)
-          .then(() => {
-            alert('Account number copied to clipboard!');
-          })
-          .catch(err => {
-            console.error('Error copying account number:', err);
-            alert('Failed to copy account number. Please try again.');
-          });
-      }
-    });
   });
   
