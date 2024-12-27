@@ -20,7 +20,7 @@ document.getElementById('login').addEventListener('submit', async (e) => {
   
     try {
       // Fetch all users from the database
-      const response = await fetch('/Verified_Users');
+      const response = await fetch('http://localhost:5000/Verified_Users');
       if (!response.ok) {
         console.error('Error fetching users:', response.status);
         alert('Error fetching user details from the server.');
