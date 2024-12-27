@@ -1,28 +1,28 @@
-// dashboard.js
-
 window.addEventListener('DOMContentLoaded', async () => {
   const user_id = localStorage.getItem('user_id');
-  
+
   if (!user_id) {
     alert('User ID not found. Please log in again.');
-    window.location.href = '/login.html'; // Redirect to login page if no user_id is found
+    window.location.href = '/login.html';
     return;
   }
 
   try {
-    // Fetch the user's balance from the server
-    const response = await fetch(`/Verified_Users/${user_id}/Balance`);
+    const response = await fetch(`http://localhost:5000/Verified_Users/${user_id}/Balance`);
+    console.log('API Response Status:', response.status); // Debug log for response status
 
     if (!response.ok) {
-      console.error('Error fetching balance:', response.status);
+      console.error('Error fetching balance:', response.statusText); // Debug log for error message
       alert('Error retrieving balance. Please try again later.');
       return;
     }
 
-    const { success, balance } = await response.json();
+    const data = await response.json();
+    console.log('API Response Data:', data); // Debug log for response data
 
-    if (success && balance !== undefined) {
-      // Update the balance field on the dashboard
+    const { success, balance } = data;
+
+    if (success && typeof balance === 'number') {
       const balanceElement = document.getElementById('balance');
       if (balanceElement) {
         balanceElement.textContent = `${balance} NGN`;
@@ -31,42 +31,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       alert('Unable to retrieve balance. Please contact support.');
     }
   } catch (error) {
-    console.error('Error fetching balance:', error);
+    console.error('Fetch Error:', error.message); // Debug log for fetch error
     alert('An error occurred while retrieving balance. Please try again later.');
   }
 });
-
-
-
-
-
-// document.addEventListener('DOMContentLoaded', () => {
-//   // Retrieve the user_id from localStorage
-//   const user_id = localStorage.getItem('user_id');
-
-//   if (!user_id) {
-//     alert('User ID is missing. Please log in again.');
-//     window.location.href = 'https://t.me/EazyNaijaPayBot';
-//     return;
-//   }
-
-//   // Fetch the user's balance from the server
-//   const balanceEndpoint = `http://localhost:5000/Verified_Users/${user_id}/Balance`;
-
-//   fetch(balanceEndpoint)
-//     .then(response => response.json())
-//     .then(data => {
-//       if (data.success) {
-//         // Update the balance on the page
-//         const balanceElement = document.getElementById('balance');
-//         if (balanceElement) {
-//           balanceElement.textContent = `${data.balance.toLocaleString()} NGN`;
-//         }
-//       } else {
-//         console.error('Failed to fetch balance:', data.message);
-//       }
-//     })
-//     .catch(error => {
-//       console.error('Error fetching balance:', error);
-//     });
-// });

@@ -2,18 +2,16 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
-const cors = require('cors'); // Import cors
-const VerifiedUser = require('./models/Inner'); // Ensure this points to the correct schema
+const cors = require('cors');
+const VerifiedUser = require('./models/Inner');
 const User = require('./models/loging');
 
 const app = express();
 
-// Middleware
-app.use(cors()); // Enable CORS
+app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// MongoDB Connection
 const MONGO_URI = "mongodb+srv://EazyNaijaPay:Ade2003@eazynaijapay.asnqh.mongodb.net/EazyNaijaPay_Bot?retryWrites=true&w=majority";
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB Connected'))
@@ -30,7 +28,6 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     }
 
     try {
-        // Match database field names
         const user = await VerifiedUser.findOne({ User_id: parseInt(User_id), Email: Email, User_pin: User_pin });
 
         if (user) {
@@ -47,12 +44,9 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 });
 
 
-  
-  
-// Endpoint: Fetch All Verified Users
 app.get('/Verified_Users', async (req, res) => {
   try {
-    const users = await VerifiedUser.find(); // Use VerifiedUser schema
+    const users = await VerifiedUser.find();
     return res.status(200).json({ success: true, data: users });
   } catch (error) {
     console.error('Error fetching users:', error);
@@ -60,7 +54,7 @@ app.get('/Verified_Users', async (req, res) => {
   }
 });
 
-// Endpoint: Fetch a Single Verified User by User_id
+
 app.get('/Verified_Users/:User_id', async (req, res) => {
   const { User_id } = req.params; // Extract User_id from request parameters
   try {
