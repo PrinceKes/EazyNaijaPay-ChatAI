@@ -36,7 +36,7 @@ document.getElementById('login').addEventListener('submit', async (e) => {
 
       if (response.ok && data.success) {
           console.log("Login successful, redirecting to Dashboard.html");
-          window.location.href = '/Dashboard.html';
+          window.location.href = './pages/Dashboard.html';
       } else {
           console.error('Login failed:', data.message || 'Invalid credentials');
           alert(data.message || 'Invalid credentials. Please try again.');

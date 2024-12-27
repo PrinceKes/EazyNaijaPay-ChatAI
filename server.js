@@ -74,7 +74,6 @@ app.get('/Verified_Users/:User_id', async (req, res) => {
   }
 });
 
-// Endpoint: Fetch User Balance
 app.get('/Verified_Users/:User_id/Balance', async (req, res) => {
   const { User_id } = req.params;
   try {

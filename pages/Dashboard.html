@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
-  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
 </head>
 <body>
   <!-- Top Hero Section -->
@@ -19,7 +19,7 @@
       <img src="assets/atm.png" alt="ATM Icon" class="atm-icon">
       <img src="./assets/master.png" alt="Mastercard" class="mastercard-icon">
       <button class="topup-btn">
-        <a href="./pages/funding.html">
+        <a href="./funding.html">
          Top Up +
         </a>
       </button>
@@ -31,15 +31,15 @@
   <section class="services">
     <h3>Our Services</h3>
     <div class="services-container">
-      <div class="service-card" onclick="location.href='./pages/buy-data.html'">
+      <div class="service-card" onclick="location.href='./buy-data.html'">
         <img src="assets/data.png" alt="Data Pack">
         <p>Data Pack</p>
       </div>
-      <div class="service-card" onclick="location.href='./pages/buy-airtime.html'">
+      <div class="service-card" onclick="location.href='./buy-airtime.html'">
         <img src="assets/airtime.png" alt="Airtime">
         <p>Airtime</p>
       </div>
-      <div class="service-card" onclick="location.href='./pages/Betting.html'">
+      <div class="service-card" onclick="location.href='./Betting.html'">
         <img src="assets/bet.png" alt="Betting">
         <p>Betting</p>
       </div>
@@ -50,7 +50,7 @@
   <section class="recent-activities">
     <div class="activity-header">
       <h3>Recent Activities</h3>
-      <a href="./pages/notification.html">View All</a>
+      <a href="./notification.html">View All</a>
     </div>
     <div class="activities-list">
       <div class="activity-card">
@@ -78,16 +78,18 @@
 
   <!-- Bottom Navbar -->
   <nav class="bottom-navbar">
-    <a href="#" class="nav-link active">
+    <a href="" class="nav-link active">
       <img src="assets/home.png" alt="Home">
     </a>
-    <a href="./pages/notification.html" class="nav-link">
+    <a href="./notification.html" class="nav-link">
       <img src="assets/notify.png" alt="Notifications">
     </a>
-    <a href="./pages/settings.html" class="nav-link">
+    <a href="./settings.html" class="nav-link">
       <img src="assets/settings.png" alt="Settings">
     </a>
   </nav>
+
+
   <script>
     console.log('Dashboard.js loaded'); // Debugging log
   </script>
@@ -95,3 +97,4 @@
   <script src="./js/auth.js"> src </script>
 </body>
 </html>
+
