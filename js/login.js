@@ -1,48 +1,47 @@
-document.getElementById('login').addEventListener('submit', async (e) => {
-  e.preventDefault();
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  const user_id = document.querySelector('#user_id').value;
+  const email = document.querySelector('#email').value;
+  const pin = document.querySelector('#pin').value;
 
   console.log("Login form submitted");
-
-  // Get user input
-  const user_id = localStorage.getItem('user_id');
-  const email = document.getElementById('email').value.trim();
-  const pinInputs = document.querySelectorAll('.pin-input');
-  const pin = Array.from(pinInputs).map(input => input.value).join('');
-
-  console.log("Inputs captured:", { user_id, email, pin });
-
-  // Validate inputs
-  if (!user_id || !email || pin.length !== 4) {
-    alert('Please fill in all fields correctly.');
-    console.log("Validation failed");
-    return;
-  }
+  const inputs = { user_id, email, pin };
+  console.log("Inputs captured:", inputs);
 
   try {
-    // Send login request to the server
-    const response = await fetch('/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ user_id, email, pin }),
-    });
-
-    const result = await response.json();
-
-    if (response.ok && result.success) {
-      console.log("Login successful, redirecting to Dashboard.html");
-      window.location.href = '/Dashboard.html'; // Redirect to the dashboard
-    } else {
-      console.error('Login failed:', result.message || 'Unknown error');
-      alert(result.message || 'Login failed. Please check your credentials.');
-    }
-  } catch (error) {
-    console.error('Error during login:', error);
-    alert('An error occurred. Please try again.');
-  }
+    const response = await fetch('https://eazynaijapay-app.onrender.com/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(inputs),
+        });
+    
+        if (!response.ok) {
+            console.error(`Server responded with status: ${response.status}`);
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+    
+        // Attempt to parse JSON
+        let data;
+        try {
+            data = await response.json();
+        } catch (jsonError) {
+            console.error("Failed to parse JSON:", jsonError);
+            throw new Error('Invalid JSON response from server.');
+        }
+    
+        console.log("Server response:", data);
+    
+        if (data.success) {
+            alert('Login successful!');
+        } else {
+            alert(`Login failed: ${data.message}`);
+        }
+    } catch (error) {
+        console.error("Error during login:", error);
+        alert("An error occurred. Please try again.");
+    }    
 });
-
 
 
 

@@ -19,33 +19,33 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB Connected'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
-// Login Route
-app.post('/login', async (req, res) => {
-  const { user_id, email, pin } = req.body;
 
-  console.log("Request body:", req.body); // Debugging: Log request body
+  app.post('/login', async (req, res) => {
+    console.log("Request received:", req.body);
+    const { user_id, email, pin } = req.body;
 
-  if (!user_id || !email || !pin) {
-    console.log("Validation failed: Missing fields");
-    return res.status(400).json({ success: false, message: 'All fields are required.' });
-  }
-
-  try {
-    // Query the Verified_Users collection
-    const user = await User.findOne({ User_id: user_id, Email: email, User_pin: pin });
-
-    if (user) {
-      console.log("Login successful for user:", user);
-      return res.status(200).json({ success: true, message: 'Login successful' });
-    } else {
-      console.log("Invalid credentials");
-      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    if (!user_id || !email || !pin) {
+        console.log("Validation failed: Missing fields");
+        return res.status(400).json({ success: false, message: 'All fields are required.' });
     }
-  } catch (error) {
-    console.error('Error during login:', error); // Log error details
-    return res.status(500).json({ success: false, message: 'Server error', error: error.message });
-  }
+
+    try {
+        const user = await User.findOne({ User_id: user_id, Email: email, User_pin: pin });
+
+        if (user) {
+            console.log("Login successful for user:", user);
+            return res.status(200).json({ success: true, message: 'Login successful' });
+        } else {
+            console.log("Invalid credentials");
+            return res.status(401).json({ success: false, message: 'Invalid credentials' });
+        }
+    } catch (error) {
+        console.error('Error during login:', error);
+        return res.status(500).json({ success: false, message: 'Server error', error: error.message });
+    }
 });
+
+  
   
 // Endpoint: Fetch All Verified Users
 app.get('/Verified_Users', async (req, res) => {
