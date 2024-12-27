@@ -12,8 +12,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     console.log(`User ID loaded: ${user_id}`); // Debugging log
   
     try {
+      // Construct the correct API URL
+      const apiUrl = `http://localhost:5000/Verified_Users/${user_id}/Account_number`;
+  
       // Make a request to fetch the user's account number
-      const response = await fetch(`/Verified_Users/${user_id}/Account_number`);
+      const response = await fetch(apiUrl);
   
       if (!response.ok) {
         console.error('Error fetching account number:', response.status);
