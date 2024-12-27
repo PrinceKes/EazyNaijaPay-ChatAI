@@ -42,6 +42,19 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
       return res.status(500).json({ success: false, message: 'Server error', error: error.message });
     }
   });
+
+
+  // Route to fetch all users from the Verified_Users collection
+app.get('/Verified_Users', async (req, res) => {
+    try {
+      const users = await User.find();
+      return res.status(200).json({ success: true, data: users });
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      return res.status(500).json({ success: false, message: 'Server error' });
+    }
+  });
+  
   
 
 // Start Server

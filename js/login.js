@@ -18,45 +18,36 @@ document.getElementById('login').addEventListener('submit', async (e) => {
       return;
     }
   
-    // Send login request to the server
-try {
-  const response = await fetch('/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ user_id, email, pin }),
+    try {
+      // Fetch all users from the database
+      const response = await fetch('/Verified_Users');
+      if (!response.ok) {
+        console.error('Error fetching users:', response.status);
+        alert('Error fetching user details from the server.');
+        return;
+      }
+  
+      const { success, data: users } = await response.json();
+      if (!success || !Array.isArray(users)) {
+        alert('Error retrieving users. Please try again.');
+        return;
+      }
+  
+      // Validate user credentials
+      const matchedUser = users.find(
+        user => user.User_id === user_id && user.Email === email && user.User_pin === pin
+      );
+  
+      if (matchedUser) {
+        console.log("Login successful, redirecting to Dashboard.html");
+        window.location.href = '/Dashboard.html';
+      } else {
+        alert('Invalid credentials. Please try again.');
+        console.log("Login failed: User not found.");
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      alert('An error occurred. Please try again.');
+    }
   });
-
-  if (!response.ok) {
-    console.error('Server returned an error:', response.status, response.statusText);
-    alert(`Error: ${response.statusText}`);
-    return;
-  }
-
-  // Attempt to parse response as JSON
-  let data;
-  try {
-    data = await response.json();
-  } catch (parseError) {
-    console.error('Failed to parse JSON response:', parseError);
-    alert('Invalid response from server.');
-    return;
-  }
-
-  console.log("Server response:", data);
-
-  if (data.success) {
-    console.log("Login successful, redirecting to Dashboard.html");
-    window.location.href = '/Dashboard.html';
-  } else {
-    alert(data.message);
-    console.log("Login failed:", data.message);
-  }
-} catch (error) {
-  console.error('Error during login:', error);
-  alert('An error occurred. Please try again.');
-}
-
-});
   
