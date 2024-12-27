@@ -22,15 +22,16 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
   app.post('/login', async (req, res) => {
     console.log("Request received:", req.body);
-    const { user_id, email, pin } = req.body;
+    const { User_id, Email, User_pin } = req.body;
 
-    if (!user_id || !email || !pin) {
+    if (!User_id || !Email || !User_pin) {
         console.log("Validation failed: Missing fields");
         return res.status(400).json({ success: false, message: 'All fields are required.' });
     }
 
     try {
-        const user = await User.findOne({ User_id: user_id, Email: email, User_pin: pin });
+        // Match database field names
+        const user = await VerifiedUser.findOne({ User_id: parseInt(User_id), Email: Email, User_pin: User_pin });
 
         if (user) {
             console.log("Login successful for user:", user);
@@ -44,6 +45,7 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
         return res.status(500).json({ success: false, message: 'Server error', error: error.message });
     }
 });
+
 
   
   

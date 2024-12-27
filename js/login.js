@@ -9,7 +9,7 @@ document.getElementById('login').addEventListener('submit', async (e) => {
   const pinInputs = document.querySelectorAll('.pin-input');
   const pin = Array.from(pinInputs).map(input => input.value).join('');
 
-  console.log("Inputs captured:", { user_id, email, pin });
+  console.log("Inputs captured:", { User_id: user_id, Email: email, User_pin: pin });
 
   // Validate inputs
   if (!user_id || !email || pin.length !== 4) {
@@ -26,7 +26,7 @@ document.getElementById('login').addEventListener('submit', async (e) => {
               'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-              User_id: user_id, // Match the key with the database field
+              User_id: user_id, 
               Email: email,
               User_pin: pin
           }),
