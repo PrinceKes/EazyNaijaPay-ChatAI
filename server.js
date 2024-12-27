@@ -3,8 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
 const cors = require('cors'); // Import cors
-const User = require('./models/loging');
-const VerifiedUser = require('./models/Inner');
+const VerifiedUser = require('./models/Inner'); // Ensure this points to the correct schema
 
 const app = express();
 
@@ -19,38 +18,10 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB Connected'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
-// Login Route
-app.post('/login', async (req, res) => {
-  const { user_id, email, pin } = req.body;
-
-  console.log("Request body:", req.body); // Debugging: Log request body
-
-  if (!user_id || !email || !pin) {
-    console.log("Validation failed: Missing fields");
-    return res.status(400).json({ success: false, message: 'All fields are required.' });
-  }
-
-  try {
-    // Query the Verified_Users collection
-    const user = await User.findOne({ User_id: user_id, Email: email, User_pin: pin });
-
-    if (user) {
-      console.log("Login successful for user:", user);
-      return res.status(200).json({ success: true, message: 'Login successful' });
-    } else {
-      console.log("Invalid credentials");
-      return res.status(401).json({ success: false, message: 'Invalid credentials' });
-    }
-  } catch (error) {
-    console.error('Error during login:', error); // Log error details
-    return res.status(500).json({ success: false, message: 'Server error', error: error.message });
-  }
-});
-
-// Route to fetch all users from the Verified_Users collection
+// Endpoint: Fetch All Verified Users
 app.get('/Verified_Users', async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await VerifiedUser.find(); // Use VerifiedUser schema
     return res.status(200).json({ success: true, data: users });
   } catch (error) {
     console.error('Error fetching users:', error);
@@ -58,26 +29,45 @@ app.get('/Verified_Users', async (req, res) => {
   }
 });
 
+// Endpoint: Fetch a Single Verified User by User_id
+app.get('/Verified_Users/:User_id', async (req, res) => {
+  const { User_id } = req.params; // Extract User_id from request parameters
+  try {
+    console.log('Fetching user with User_id:', User_id); // Debugging log
+    const user = await VerifiedUser.findOne({ User_id: String(User_id) }); // Ensure User_id is treated as a string
 
-
-
-// Endpoint to get user's balance
-app.get('/Verified_Users/:User_id/Balance', async (req, res) => {
-    const { User_id } = req.params;
-    try {
-      // Ensure User_id is converted to string and matches the schema
-      const user = await VerifiedUser.findOne({ User_id: String(User_id) }); 
-      if (!user) {
-        return res.status(404).json({ success: false, message: 'User not found' });
-      }
-      return res.status(200).json({ success: true, balance: user.Balance });
-    } catch (error) {
-      console.error('Error fetching balance:', error);
-      return res.status(500).json({ success: false, message: 'Server error' });
+    if (!user) {
+      console.log('User not found for User_id:', User_id); // Debugging log
+      return res.status(404).json({ success: false, message: 'User not found' });
     }
-  });
-  
-  
+
+    console.log('User found:', user); // Debugging log
+    return res.status(200).json({ success: true, user });
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    return res.status(500).json({ success: false, message: 'Server error', error: error.message });
+  }
+});
+
+// Endpoint: Fetch User Balance
+app.get('/Verified_Users/:User_id/Balance', async (req, res) => {
+  const { User_id } = req.params;
+  try {
+    console.log('Fetching balance for User_id:', User_id); // Debugging log
+    const user = await VerifiedUser.findOne({ User_id: String(User_id) });
+
+    if (!user) {
+      console.log('User not found for User_id:', User_id); // Debugging log
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    return res.status(200).json({ success: true, balance: user.Balance });
+  } catch (error) {
+    console.error('Error fetching balance:', error);
+    return res.status(500).json({ success: false, message: 'Server error', error: error.message });
+  }
+});
+
   // Endpoint to get user's account number
   app.get('/Verified_Users/:User_id/Account_number', async (req, res) => {
     const { User_id } = req.params;
@@ -119,9 +109,8 @@ app.get('/Verified_Users/:User_id/Balance', async (req, res) => {
 
 
 
+// Start the server
+const PORT = 5000;
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
 
-// Start Server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+
