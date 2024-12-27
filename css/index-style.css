@@ -101,6 +101,7 @@
     font-size: 14px;
     text-transform: uppercase;
     transition: background 0.3s ease;
+    align-self: center;
   }
   
   .continue-btn:hover {
@@ -139,4 +140,7 @@
     background-color: #d3d3d3;
     border-radius: 15px;
     margin-top: 15px;
+    width: 170px;
+    color: #00ff80;
+    align-self: center;
 }
