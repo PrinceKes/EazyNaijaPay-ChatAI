@@ -4,64 +4,42 @@ document.getElementById('login').addEventListener('submit', async (e) => {
   console.log("Login form submitted");
 
   // Get user input
-  const user_id = localStorage.getItem('user_id'); // Fetch user_id from localStorage
+  const user_id = localStorage.getItem('user_id'); // user_id from localStorage
   const email = document.getElementById('email').value.trim();
   const pinInputs = document.querySelectorAll('.pin-input');
-  const pin = Array.from(pinInputs).map(input => input.value).join(''); // Concatenate pin inputs
+  const pin = Array.from(pinInputs).map(input => input.value).join('');
 
   console.log("Inputs captured:", { user_id, email, pin });
 
   // Validate inputs
   if (!user_id || !email || pin.length !== 4) {
       alert('Please fill in all fields correctly.');
-      console.log("Validation failed: Missing or incorrect fields.");
+      console.log("Validation failed");
       return;
   }
 
   try {
-      // Fetch user details from the server
-      const response = await fetch('http://localhost:5000/Verified_Users/');
-      if (!response.ok) {
-          console.error('Error fetching users:', response.status);
-          alert('Error fetching user details from the server.');
-          return;
-      }
+      // Send login details to the server for verification
+      const response = await fetch('http://localhost:5000/login', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+              User_id: user_id, // Match the key with the database field
+              Email: email,
+              User_pin: pin
+          }),
+      });
 
-      const { success, data: users } = await response.json();
-      if (!success || !Array.isArray(users)) {
-          alert('Error retrieving users. Please try again.');
-          console.error('Unexpected response:', response);
-          return;
-      }
+      const data = await response.json();
 
-      // Check if user exists in the database
-      const matchedUser = users.find(user => 
-          user.User_id === parseInt(user_id, 10) && 
-          user.Email === email && 
-          user.User_pin === pin
-      );
-
-      if (matchedUser) {
+      if (response.ok && data.success) {
           console.log("Login successful, redirecting to Dashboard.html");
-
-          // Optionally send user info to the server for session tracking or additional validation
-          const loginResponse = await fetch('http://localhost:5000/login', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ user_id, email, pin })
-          });
-
-          const loginResult = await loginResponse.json();
-          if (loginResult.success) {
-              // Redirect on successful login
-              window.location.href = '/Dashboard.html';
-          } else {
-              alert('Invalid credentials. Please try again.');
-              console.log("Login failed:", loginResult.message);
-          }
+          window.location.href = '/Dashboard.html';
       } else {
-          alert('Invalid credentials. Please try again.');
-          console.log("Login failed: User not found.");
+          console.error('Login failed:', data.message || 'Invalid credentials');
+          alert(data.message || 'Invalid credentials. Please try again.');
       }
   } catch (error) {
       console.error('Error during login:', error);
