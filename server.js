@@ -123,17 +123,17 @@ app.get('/Verified_Users/:User_id/Balance', async (req, res) => {
 
   
   // Endpoint to get user's transaction history
-  // app.get('/Verified_Users/:User_id/Transaction', async (req, res) => {
-  //   const { User_id } = req.params;
-  //   try {
-  //     const user = await VerifiedUser.findOne({ User_id: String(User_id) });
-  //     if (!user) return res.status(404).json({ success: false, message: 'User not found' });
-  //     return res.status(200).json({ success: true, transactions: user.Transaction });
-  //   } catch (error) {
-  //     console.error('Error fetching transactions:', error);
-  //     return res.status(500).json({ success: false, message: 'Server error' });
-  //   }
-  // });
+  app.get('/Verified_Users/:User_id/Transaction', async (req, res) => {
+    const { User_id } = req.params;
+    try {
+      const user = await VerifiedUser.findOne({ User_id: String(User_id) });
+      if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+      return res.status(200).json({ success: true, transactions: user.Transaction });
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+      return res.status(500).json({ success: false, message: 'Server error' });
+    }
+  });
   
   // Endpoint to get user's username
   app.get('/Verified_Users/:User_id/Username', async (req, res) => {
@@ -207,57 +207,6 @@ app.get('/Verified_Users/:User_id/profile_picture', async (req, res) => {
   }
 });
 
-
-
-
-// Endpoint to add a new transaction for a user
-app.post("/Verified_Users/:User_id/Transaction", async (req, res) => {
-  const { User_id } = req.params;
-  const { title, description, date, status } = req.body;
-
-  try {
-    // Add the transaction using the model method
-    const updatedTransactions = await Transaction.addTransaction(User_id, {
-      title,
-      description,
-      date,
-      status,
-    });
-
-    res.status(200).json({ success: true, transactions: updatedTransactions.transactions });
-  } catch (error) {
-    console.error("Error adding transaction:", error);
-    res.status(500).json({ success: false, message: "Server error" });
-  }
-});
-
-// Endpoint to get user's transaction history
-app.get("/Verified_Users/:User_id/Transaction", async (req, res) => {
-  const { User_id } = req.params;
-
-  try {
-    // Fetch the transactions using the model method
-    const result = await Transaction.getTransactions(User_id);
-    if (!result.success) {
-      return res.status(404).json(result);
-    }
-    res.status(200).json(result);
-  } catch (error) {
-    console.error("Error fetching transactions:", error);
-    res.status(500).json({ success: false, message: "Server error" });
-  }
-});
-
-// Connect to MongoDB and start the server
-mongoose
-  .connect("mongodb://localhost:27017/YourDatabaseName", { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
-    console.log("MongoDB Connected");
-    app.listen(5000, () => {
-      console.log("Server running on http://localhost:5000");
-    });
-  })
-  .catch((err) => console.error("MongoDB connection error:", err));
 
 
 
