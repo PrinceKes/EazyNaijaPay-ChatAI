@@ -149,7 +149,7 @@ app.get('/Verified_Users/:User_id/Balance', async (req, res) => {
 
 
 
-// Ensure the profile_pictures directory exists
+// profile_pictures endpoint 
 const profilePicturesDir = path.join(__dirname, 'profile_pictures');
 if (!fs.existsSync(profilePicturesDir)) {
   fs.mkdirSync(profilePicturesDir, { recursive: true });
