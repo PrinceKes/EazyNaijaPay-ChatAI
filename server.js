@@ -7,6 +7,7 @@ const VerifiedUser = require('./models/Inner');
 const User = require('./models/loging');
 const axios = require('axios');
 const fs = require('fs');
+const Transaction = require("./models/transaction");
 
 const BOT_TOKEN = '8136531029:AAHlArThifhrPiOQuQv5HYi_gBpt7_XZFjA'; // Replace with your bot token
 
@@ -16,6 +17,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
 
 const MONGO_URI = "mongodb+srv://EazyNaijaPay:Ade2003@eazynaijapay.asnqh.mongodb.net/EazyNaijaPay_Bot?retryWrites=true&w=majority";
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -121,17 +123,17 @@ app.get('/Verified_Users/:User_id/Balance', async (req, res) => {
 
   
   // Endpoint to get user's transaction history
-  app.get('/Verified_Users/:User_id/Transaction', async (req, res) => {
-    const { User_id } = req.params;
-    try {
-      const user = await VerifiedUser.findOne({ User_id: String(User_id) });
-      if (!user) return res.status(404).json({ success: false, message: 'User not found' });
-      return res.status(200).json({ success: true, transactions: user.Transaction });
-    } catch (error) {
-      console.error('Error fetching transactions:', error);
-      return res.status(500).json({ success: false, message: 'Server error' });
-    }
-  });
+  // app.get('/Verified_Users/:User_id/Transaction', async (req, res) => {
+  //   const { User_id } = req.params;
+  //   try {
+  //     const user = await VerifiedUser.findOne({ User_id: String(User_id) });
+  //     if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+  //     return res.status(200).json({ success: true, transactions: user.Transaction });
+  //   } catch (error) {
+  //     console.error('Error fetching transactions:', error);
+  //     return res.status(500).json({ success: false, message: 'Server error' });
+  //   }
+  // });
   
   // Endpoint to get user's username
   app.get('/Verified_Users/:User_id/Username', async (req, res) => {
@@ -155,25 +157,21 @@ if (!fs.existsSync(profilePicturesDir)) {
   fs.mkdirSync(profilePicturesDir, { recursive: true });
 }
 
-// Endpoint to fetch Telegram profile picture
 app.get('/Verified_Users/:User_id/profile_picture', async (req, res) => {
   const { User_id } = req.params;
 
   try {
-    // Check if the profile picture is already cached locally
     const localFilePath = path.join(profilePicturesDir, `${User_id}.jpg`);
     if (fs.existsSync(localFilePath)) {
       return res.sendFile(localFilePath);
     }
 
-    // Fetch user profile photos using Telegram Bot API
     const response = await axios.get(
       `https://api.telegram.org/bot${BOT_TOKEN}/getUserProfilePhotos?user_id=${User_id}`
     );
 
     const photos = response.data.result.photos;
     if (!photos || photos.length === 0) {
-      // No profile picture found; return a default placeholder
       return res.status(404).json({
         success: false,
         message: 'No profile picture found',
@@ -181,19 +179,15 @@ app.get('/Verified_Users/:User_id/profile_picture', async (req, res) => {
       });
     }
 
-    // Get the file_id of the latest profile picture
     const fileId = photos[0][0].file_id;
 
-    // Get the file path from Telegram API
     const fileResponse = await axios.get(
       `https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}`
     );
     const filePath = fileResponse.data.result.file_path;
 
-    // Construct the file URL
     const fileUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${filePath}`;
 
-    // Download and save the profile picture
     const writer = fs.createWriteStream(localFilePath);
     const imageResponse = await axios({
       url: fileUrl,
@@ -212,6 +206,59 @@ app.get('/Verified_Users/:User_id/profile_picture', async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error' });
   }
 });
+
+
+
+
+// Endpoint to add a new transaction for a user
+app.post("/Verified_Users/:User_id/Transaction", async (req, res) => {
+  const { User_id } = req.params;
+  const { title, description, date, status } = req.body;
+
+  try {
+    // Add the transaction using the model method
+    const updatedTransactions = await Transaction.addTransaction(User_id, {
+      title,
+      description,
+      date,
+      status,
+    });
+
+    res.status(200).json({ success: true, transactions: updatedTransactions.transactions });
+  } catch (error) {
+    console.error("Error adding transaction:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+// Endpoint to get user's transaction history
+app.get("/Verified_Users/:User_id/Transaction", async (req, res) => {
+  const { User_id } = req.params;
+
+  try {
+    // Fetch the transactions using the model method
+    const result = await Transaction.getTransactions(User_id);
+    if (!result.success) {
+      return res.status(404).json(result);
+    }
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error fetching transactions:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+// Connect to MongoDB and start the server
+mongoose
+  .connect("mongodb://localhost:27017/YourDatabaseName", { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log("MongoDB Connected");
+    app.listen(5000, () => {
+      console.log("Server running on http://localhost:5000");
+    });
+  })
+  .catch((err) => console.error("MongoDB connection error:", err));
+
 
 
 // Start the server
