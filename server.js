@@ -5,6 +5,12 @@ const path = require('path');
 const cors = require('cors');
 const VerifiedUser = require('./models/Inner');
 const User = require('./models/loging');
+const axios = require('axios');
+const fs = require('fs');
+// const path = require('path');
+
+const BOT_TOKEN = '8136531029:AAHlArThifhrPiOQuQv5HYi_gBpt7_XZFjA'; // Replace with your bot token
+
 
 const app = express();
 
@@ -141,6 +147,59 @@ app.get('/Verified_Users/:User_id/Balance', async (req, res) => {
     }
   });
 
+
+
+
+
+  // Endpoint to fetch and serve Telegram profile picture
+  app.get('/profile-picture/:User_id', async (req, res) => {
+    const { User_id } = req.params;
+  
+    try {
+      // Fetch user profile photos using Telegram Bot API
+      const response = await axios.get(
+        `https://api.telegram.org/bot${BOT_TOKEN}/getUserProfilePhotos?user_id=${User_id}`
+      );
+  
+      const photos = response.data.result.photos;
+      if (!photos || photos.length === 0) {
+        return res.status(404).json({ success: false, message: 'No profile picture found' });
+      }
+  
+      // Get the file_id of the latest profile picture
+      const fileId = photos[0][0].file_id;
+  
+      // Get the file path from Telegram API
+      const fileResponse = await axios.get(
+        `https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}`
+      );
+      const filePath = fileResponse.data.result.file_path;
+  
+      // Construct the file URL
+      const fileUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${filePath}`;
+  
+      // Download the image and serve it
+      const localFilePath = path.join(__dirname, 'profile_pictures', `${User_id}.jpg`);
+      const writer = fs.createWriteStream(localFilePath);
+      const imageResponse = await axios({
+        url: fileUrl,
+        method: 'GET',
+        responseType: 'stream',
+      });
+      imageResponse.data.pipe(writer);
+  
+      writer.on('finish', () => {
+        res.sendFile(localFilePath);
+      });
+      writer.on('error', () => {
+        res.status(500).json({ success: false, message: 'Error downloading profile picture' });
+      });
+    } catch (error) {
+      console.error('Error fetching profile picture:', error);
+      res.status(500).json({ success: false, message: 'Server error' });
+    }
+  });
+  
 
 
 // Start the server
