@@ -92,52 +92,19 @@ app.get('/Verified_Users/:User_id/Balance', async (req, res) => {
   }
 });
 
-  // // Endpoint to get user's account number
-  // app.get('/Verified_Users/:User_id/Account_number', async (req, res) => {
-  //   const { User_id } = req.params;
-  //   try {
-  //     const user = await VerifiedUser.findOne({ User_id: String(User_id) });
-  //     if (!user) return res.status(404).json({ success: false, message: 'User not found' });
-  //     return res.status(200).json({ success: true, account_number: user.Account_number });
-  //   } catch (error) {
-  //     console.error('Error fetching account number:', error);
-  //     return res.status(500).json({ success: false, message: 'Server error' });
-  //   }
-  // });
-
-  // app.get('/Verified_Users/:User_id/Account_number', async (req, res) => {
-  //   const { User_id } = req.params;
-  //   console.log(`Received request for User ID: ${User_id}`); // Log User ID
-  
-  //   try {
-  //     const user = await VerifiedUser.findOne({ User_id: String(User_id) });
-  //     if (!user) {
-  //       console.log('User not found in database'); // Log if user is not found
-  //       return res.status(404).json({ success: false, message: 'User not found' });
-  //     }
-  
-  //     console.log(`Account number retrieved: ${user.Account_number}`); // Log account number
-  //     return res.status(200).json({ success: true, account_number: user.Account_number });
-  //   } catch (error) {
-  //     console.error('Error fetching account number:', error);
-  //     return res.status(500).json({ success: false, message: 'Server error' });
-  //   }
-  // });
-  
 
   app.get('/Verified_Users/:User_id/Account_number', async (req, res) => {
     const { User_id } = req.params;
-    console.log(`Received request for User ID: ${User_id}`); // Log User ID
+    console.log(`Received request for User ID: ${User_id}`);
   
     try {
-      // Normalize the User ID for case-insensitive matching
       const user = await VerifiedUser.findOne({ User_id: String(User_id).toLowerCase() });
       if (!user) {
-        console.log('User not found in database'); // Log if user is not found
+        console.log('User not found in database');
         return res.status(404).json({ success: false, message: 'User not found' });
       }
   
-      console.log(`Account number retrieved: ${user.Account_number}`); // Log account number
+      console.log(`Account number retrieved: ${user.Account_number}`);
       return res.status(200).json({ success: true, account_number: user.Account_number });
     } catch (error) {
       console.error('Error fetching account number:', error);
