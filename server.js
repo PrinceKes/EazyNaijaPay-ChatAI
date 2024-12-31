@@ -7,7 +7,7 @@ const VerifiedUser = require('./models/Inner');
 const User = require('./models/loging');
 const axios = require('axios');
 const fs = require('fs');
-const Transaction = require("./models/transaction");
+const Transaction = require("./models/Verified_Users");
 
 const BOT_TOKEN = '8136531029:AAHlArThifhrPiOQuQv5HYi_gBpt7_XZFjA'; // Replace with your bot token
 
@@ -21,6 +21,7 @@ app.use(express.json());
 
 const MONGO_URI = "mongodb+srv://EazyNaijaPay:Ade2003@eazynaijapay.asnqh.mongodb.net/EazyNaijaPay_Bot?retryWrites=true&w=majority";
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+// mongoose.connect(MONGO_URI)
   .then(() => console.log('MongoDB Connected'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
@@ -119,9 +120,6 @@ app.get('/Verified_Users/:User_id/Balance', async (req, res) => {
     }
   });
   
-  
-
-  
   // Endpoint to get user's transaction history
   app.get('/Verified_Users/:User_id/Transaction', async (req, res) => {
     const { User_id } = req.params;
@@ -147,9 +145,6 @@ app.get('/Verified_Users/:User_id/Balance', async (req, res) => {
       return res.status(500).json({ success: false, message: 'Server error' });
     }
   });
-
-
-
 
 // profile_pictures endpoint 
 const profilePicturesDir = path.join(__dirname, 'profile_pictures');
@@ -215,3 +210,77 @@ const PORT = 5000;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
 
 
+
+
+
+
+
+
+// The part I am working on now
+
+// app.post('/Verified_Users/:User_id/Transaction/update_transaction', async (req, res) => {
+//   const { User_id } = req.params;
+//   const { transaction_id, type, amount } = req.body;
+
+//   // Validate input
+//   if (!transaction_id || !type || !amount || !['credit', 'debit'].includes(type)) {
+//     return res.status(400).json({ success: false, message: 'Invalid input' });
+//   }
+
+//   try {
+//     // Fetch the user
+//     const user = await VerifiedUser.findOne({ User_id: String(User_id) });
+
+//     if (!user) {
+//       return res.status(404).json({ success: false, message: 'User not found' });
+//     }
+
+//     // Add the transaction
+//     const newTransaction = { transaction_id, type, amount };
+//     user.Transaction.push(newTransaction);
+
+//     // Update balance based on transaction type
+//     if (type === 'credit') {
+//       user.Balance += amount;
+//     } else if (type === 'debit') {
+//       if (user.Balance < amount) {
+//         return res.status(400).json({ success: false, message: 'Insufficient balance' });
+//       }
+//       user.Balance -= amount;
+//     }
+
+//     // Save the updated user document
+//     await user.save();
+
+//     return res.status(200).json({
+//       success: true,
+//       message: 'Transaction updated successfully',
+//       newBalance: user.Balance,
+//       transaction: newTransaction,
+//     });
+//   } catch (error) {
+//     console.error('Error updating transaction:', error);
+//     return res.status(500).json({ success: false, message: 'Server error', error: error.message });
+//   }
+// });
+
+
+
+
+// app.get('/Verified_Users/:User_id/Transaction', async (req, res) => {
+//   const { User_id } = req.params;
+
+//   try {
+//     const user = await Verified_Users.findOne({ User_id: String(User_id) });
+
+//     if (!user) {
+//       return res.status(404).json({ success: false, message: 'User not found' });
+//     }
+
+//     const transactions = user.Transaction || [];
+//     return res.status(200).json({ success: true, transactions });
+//   } catch (error) {
+//     console.error('Error fetching transactions:', error);
+//     return res.status(500).json({ success: false, message: 'Server error', error: error.message });
+//   }
+// });
