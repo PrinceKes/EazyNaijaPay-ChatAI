@@ -7,7 +7,10 @@ const VerifiedUser = require('./models/Inner');
 const User = require('./models/loging');
 const axios = require('axios');
 const fs = require('fs');
-const Transaction = require("./models/Verified_Users");
+// const Transaction = require("./models/Verified_Users");
+const Transaction = require("./models/Transactions");
+
+const crypto = require('crypto');
 
 const BOT_TOKEN = '8136531029:AAHlArThifhrPiOQuQv5HYi_gBpt7_XZFjA'; // Replace with your bot token
 
@@ -201,6 +204,83 @@ app.get('/Verified_Users/:User_id/profile_picture', async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error' });
   }
 });
+
+
+
+
+
+
+
+
+
+
+
+// webhook code for transaction detection and notifying
+// Webhook to detect payments and update user transactions and balance
+app.post('/webhook/flutterwave', async (req, res) => {
+  try {
+      const { event, data } = req.body;
+
+      if (event === 'transfer.completed') {
+          const { account_number, amount, transaction_reference, status } = data;
+
+          if (status === 'successful') {
+              const user = await VerifiedUser.findOne({ Account_number: account_number });
+
+              if (!user) {
+                  return res.status(404).json({ success: false, message: 'User not found' });
+              }
+
+              const newTransaction = new Transaction({
+                  User_id: user.User_id,
+                  Transaction_Type: 'Deposit',
+                  Amount: amount,
+                  Status: 'Completed',
+                  Reference: transaction_reference,
+              });
+
+              await newTransaction.save();
+
+              user.Transactions.push(newTransaction._id);
+
+              user.Balance += amount;
+
+              await user.save();
+
+              return res.status(200).json({ success: true, message: 'Transaction and balance updated' });
+          } else {
+              return res.status(400).json({ success: false, message: 'Transaction not successful' });
+          }
+      } else {
+          return res.status(400).json({ success: false, message: 'Unhandled event type' });
+      }
+  } catch (error) {
+      console.error('Error handling webhook:', error);
+      return res.status(500).json({ success: false, message: 'Server error', error: error.message });
+  }
+});
+
+
+
+
+
+
+app.post('/webhook/flutterwave', async (req, res) => {
+    const flutterwaveSecret = 'your-flutterwave-secret-key';
+    const signature = req.headers['verif-hash'];
+
+    const payload = JSON.stringify(req.body);
+    const expectedSignature = crypto.createHmac('sha256', flutterwaveSecret).update(payload).digest('hex');
+
+    if (signature !== expectedSignature) {
+        return res.status(401).json({ success: false, message: 'Invalid signature' });
+    }
+
+});
+
+
+
+
 
 
 
