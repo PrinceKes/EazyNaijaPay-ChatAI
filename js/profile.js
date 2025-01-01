@@ -9,7 +9,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   
     try {
       const profileImgElement = document.querySelector('.profile-img');
-      const response = await fetch(`http://localhost:5000/Verified_Users/${user_id}/profile_picture`);
+      const response = await fetch(`https://eazynaijapay-server.onrender.com/Verified_Users/${user_id}/profile_picture`);
   
       if (response.ok) {
         const blob = await response.blob();

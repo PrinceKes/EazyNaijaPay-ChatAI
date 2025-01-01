@@ -20,7 +20,7 @@ document.getElementById('login').addEventListener('submit', async (e) => {
 
   try {
       // Send login details to the server for verification
-      const response = await fetch('http://localhost:5000/login', {
+      const response = await fetch('https://eazynaijapay-server.onrender.com/login', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',

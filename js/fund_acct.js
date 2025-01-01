@@ -13,7 +13,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   
     try {
       // Construct the correct API URL
-      const apiUrl = `http://localhost:5000/Verified_Users/${user_id}/Account_number`;
+      const apiUrl = `https://eazynaijapay-server.onrender.com/Verified_Users/${user_id}/Account_number`;
   
       // Make a request to fetch the user's account number
       const response = await fetch(apiUrl);

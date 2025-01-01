@@ -8,7 +8,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 
   try {
-    const response = await fetch(`http://localhost:5000/Verified_Users/${user_id}/Balance`);
+    const response = await fetch(`https://eazynaijapay-server.onrender.com/Verified_Users/${user_id}/Balance`);
     console.log('API Response Status:', response.status); // Debug log for response status
 
     if (!response.ok) {

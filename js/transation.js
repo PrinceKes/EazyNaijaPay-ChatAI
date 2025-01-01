@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   
     try {
       // Fetch transactions from the server
-      const response = await fetch(`http://localhost:5000/Verified_Users/${userId}/Transaction`);
+      const response = await fetch(`https://eazynaijapay-server.onrender.com/Verified_Users/${userId}/Transaction`);
       const data = await response.json();
   
       if (!data.success || !data.transactions.length) {

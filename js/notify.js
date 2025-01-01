@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   
     // Endpoint to fetch the user's transaction history
-    const transactionsEndpoint = `http://localhost:5000/Verified_Users/${user_id}/Transaction`;
+    const transactionsEndpoint = `https://eazynaijapay-server.onrender.com/Verified_Users/${user_id}/Transaction`;
   
     fetch(transactionsEndpoint)
       .then(response => response.json())

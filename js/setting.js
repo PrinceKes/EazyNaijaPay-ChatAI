@@ -13,7 +13,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   
     try {
       // Fetch the username from the server
-      const response = await fetch(`http://localhost:5000/Verified_Users/${user_id}/Username`);
+      const response = await fetch(`https://eazynaijapay-server.onrender.com/Verified_Users/${user_id}/Username`);
   
       if (!response.ok) {
         console.error('Error fetching username:', response.status);

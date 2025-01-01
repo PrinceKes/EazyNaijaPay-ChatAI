@@ -21,13 +21,13 @@ document.querySelector(".continue-btn").addEventListener("click", async () => {
     }
 
     // Fetch user details from your server
-    const userId = localStorage.getItem("User_id");
+    const userId = localStorage.getItem("user_id") || localStorage.getItem("User_id");
     if (!userId) {
       alert("User ID not found in local storage.");
       return;
     }
 
-    const userResponse = await fetch(`http://localhost:5000/Verified_Users/${userId}`);
+    const userResponse = await fetch(`https://eazynaijapay-server.onrender.com/Verified_Users/${userId}`);
     const userData = await userResponse.json();
 
     if (!userData.success) {
