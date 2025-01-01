@@ -24,7 +24,7 @@ app.use(express.json());
 
 const MONGO_URI = "mongodb+srv://EazyNaijaPay:Ade2003@eazynaijapay.asnqh.mongodb.net/EazyNaijaPay_Bot?retryWrites=true&w=majority";
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-
+// mongoose.connect(MONGO_URI)
   .then(() => console.log('MongoDB Connected'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
@@ -286,8 +286,6 @@ app.post('/webhook/flutterwave', async (req, res) => {
 
 
 // Start the server
-const PORT = process.env.PORT || 5000; // Use Render's assigned PORT or default to 3000
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const PORT = 5000;
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
 

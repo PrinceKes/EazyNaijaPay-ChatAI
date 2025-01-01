@@ -24,7 +24,7 @@
       <select id="network-dropdown" class="dropdown">
         <option value="mtn" data-icon="../assets/mtn.png">MTN</option>
         <option value="glo" data-icon="../assets/glo-icon.png">GLO</option>
-        <option value="9mobile" data-icon="../assets/9mobile-icon.png">9Mobile</option>
+        <option value="9mobile" data-icon="../assets/9mobile-icon.png">9 Mobile</option>
         <option value="airtel" data-icon="../assets/airtel-icon.png">Airtel</option>
       </select>
     </label>
@@ -43,9 +43,24 @@
     </div>
 
     <!-- Airtime Amount -->
+    <!-- Airtime Amount -->
     <div class="input-group">
       <label for="amount" class="label-text">Airtime Amount</label>
-      <input type="text" id="amount" value="₦ 0.00" class="input-field" readonly>
+      <div class="input-wrapper">
+        <span class="currency-icon">₦</span>
+        <input 
+          type="text" 
+          id="amount" 
+          value="0.00" 
+          class="input-field" 
+          onfocus="enableInput(this)" 
+          onblur="disableInput(this)" 
+          oninput="validateAmount(this)" 
+          readonly
+        >
+        
+      </div>
+      
       <img src="../assets/naira-icon.png" alt="Currency Icon" class="field-icon">
     </div>
 
@@ -101,5 +116,25 @@
       document.getElementById('amount').value = `₦ ${amount}`;
     }
   </script>
+
+
+<!-- javascript for selecting amount -->
+
+<script>
+  function enableInput(input) {
+    input.removeAttribute('readonly');
+  }
+  function disableInput(input) {
+    input.setAttribute('readonly', true);
+  }
+  function validateAmount(input) {
+    input.value = input.value.replace(/[^\d]/g, '');
+  }
+  function setAmount(amount) {
+    const input = document.getElementById('amount');
+    input.value = amount;
+  }
+</script>
+
 </body>
 </html>
