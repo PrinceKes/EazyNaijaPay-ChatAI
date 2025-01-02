@@ -43,11 +43,19 @@ body {
 /* Main Content */
 .container {
   padding: 20px;
+  margin-bottom: 50px;
 }
 
 .input-group {
   margin-bottom: 15px;
   position: relative;
+  /* margin-bottom: 50px; */
+}
+
+.up-input-group{
+  margin-bottom: 15px;
+  position: relative;
+  margin-bottom: 50px;
 }
 
 .label-text {
