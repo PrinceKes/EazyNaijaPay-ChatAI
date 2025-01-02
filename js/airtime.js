@@ -1,14 +1,10 @@
 // Define constants for admin credentials and eBills API endpoint
 const ADMIN_USERNAME = "Enoch";
 const ADMIN_PASSWORD = "Adeboye@02";
-const EBILLS_BASE_URL = "https://ebills.africa/wp-json/api/v1";
-
-const airtimeResponse = await fetch(apiUrl, { method: "GET" });
-const airtimeData = await airtimeResponse.json();
-
+const EBILLS_BASE_URL = "https://ebills.africa/wp-json/api/v1"; // Confirm this base URL
 
 // Function to handle "Continue to Pay" button click
-document.querySelector(".continue-btn").addEventListener("click", async () => {
+document.querySelector("#paynow").addEventListener("click", async () => {
   try {
     // Get user inputs
     const networkDropdown = document.getElementById("network-dropdown");
@@ -19,7 +15,7 @@ document.querySelector(".continue-btn").addEventListener("click", async () => {
     const userPin = Array.from(pinInputs).map(input => input.value).join("");
 
     // Validate inputs
-    if (!network || !phone || !amount || isNaN(amount) || userPin.length !== 4) {
+    if (!network || !phone || isNaN(amount) || userPin.length !== 4) {
       alert("Please fill all fields correctly.");
       return;
     }
@@ -61,28 +57,16 @@ document.querySelector(".continue-btn").addEventListener("click", async () => {
     const airtimeData = await airtimeResponse.json();
 
     // Handle API response
-    if (airtimeResponse.ok && airtimeData.code === "success") {
-        alert(`Airtime purchase successful: ₦${amount} for ${phone}`);
-      } else {
-        console.error("API Response:", airtimeData); // Log full response
-        alert(`Failed to process airtime: ${airtimeData.message || "Unknown error"}`);
-      }
+    if (airtimeData.code === "success") {
+      alert(`Airtime purchase successful: ₦${amount} for ${phone}`);
+    } else {
+      alert(`Failed to process airtime: ${airtimeData.message}`);
+    }
   } catch (error) {
     console.error("Error processing airtime purchase:", error);
     alert("An unexpected error occurred. Please try again later.");
   }
 });
-
-// const airtimeResponse = await fetch(apiUrl, { method: "GET" });
-// const airtimeData = await airtimeResponse.json();
-
-// if (airtimeResponse.ok && airtimeData.code === "success") {
-//   alert(`Airtime purchase successful: ₦${amount} for ${phone}`);
-// } else {
-//   console.error("API Response:", airtimeData); // Log full response
-//   alert(`Failed to process airtime: ${airtimeData.message || "Unknown error"}`);
-// }
-
 
 // Function to handle amount button clicks
 function setAmount(value) {
@@ -110,5 +94,12 @@ function validateAmount(input) {
     input.value = "0.00";
   } else {
     input.value = value.toFixed(2);
+  }
+}
+
+// Automatically move to the next PIN input
+function moveToNext(current, nextId) {
+  if (current.value.length === 1) {
+    document.getElementById(nextId).focus();
   }
 }
