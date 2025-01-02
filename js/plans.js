@@ -42,4 +42,4 @@ const plans = {
   };
 
     
-export default dataPlans;
+export default plans;
