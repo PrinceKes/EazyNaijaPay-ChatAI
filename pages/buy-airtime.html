@@ -76,12 +76,13 @@
     <div id="verify-pin" class="pin-section">
       <label class="label-text">Verify Pin</label>
       <div class="pin-inputs">
-        <input type="password" maxlength="1" class="pin-input">
-        <input type="password" maxlength="1" class="pin-input">
-        <input type="password" maxlength="1" class="pin-input">
-        <input type="password" maxlength="1" class="pin-input">
+        <input type="password" maxlength="1" id="pin1" class="pin-input" oninput="moveToNext(this, 'pin2')">
+        <input type="password" maxlength="1" id="pin2" class="pin-input" oninput="moveToNext(this, 'pin3')">
+        <input type="password" maxlength="1" id="pin3" class="pin-input" oninput="moveToNext(this, 'pin4')">
+        <input type="password" maxlength="1" id="pin4" class="pin-input">
       </div>
     </div>
+
 
     <!-- Continue Button -->
     <button class="continue-btn">Continue to pay</button>
@@ -103,6 +104,16 @@
   <script src="../js/airtime.js"></script>
   <script src="../js/auth.js"></script>
 
+  
+    <!-- script for making pin interactive -->
+    <script>
+      function moveToNext(current, nextID) {
+          if (current.value.length >= 1) {
+              document.getElementById(nextID).focus();
+          }
+      }
+    </script>
+
   <!-- JavaScript -->
   <script>
     // Handle Network Dropdown
@@ -122,7 +133,6 @@
 
 
 <!-- javascript for selecting amount -->
-
 <script>
   function enableInput(input) {
     input.removeAttribute('readonly');
