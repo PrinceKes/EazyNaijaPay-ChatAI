@@ -19,20 +19,19 @@ document.addEventListener("DOMContentLoaded", () => {
     Object.keys(dataPlans).forEach((network) => {
       const option = document.createElement("option");
       option.value = network;
-      option.textContent = network; // Network name from plans.js
+      option.textContent = network;
       networkDropdown.appendChild(option);
     });
   };
 
   // Fetch and display plans for the selected network
   const displayPlans = (networkId) => {
-    const plans = dataPlans[networkId]; // Get plans from plans.js
+    const plans = dataPlans[networkId];
     if (!plans) {
       alert("No plans available for this network.");
       return;
     }
 
-    // Clear existing options
     planDropdown.innerHTML =
       '<option value="" disabled selected>Choose your desired plan</option>';
 
@@ -58,10 +57,9 @@ document.addEventListener("DOMContentLoaded", () => {
   planDropdown.addEventListener("change", (event) => {
     const selectedOption = event.target.options[event.target.selectedIndex];
     selectedPlanAmount = selectedOption.getAttribute("data-amount");
-    amountInput.value = selectedPlanAmount; // Update the amount input field
+    amountInput.value = selectedPlanAmount;
   });
 
-  // Handle payment logic
   payNowButton.addEventListener("click", async () => {
     const phoneInput = document.getElementById("phone-number").value;
     if (!selectedNetworkId || !selectedPlanAmount || !phoneInput) {
@@ -85,7 +83,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Populate networks on page load
   populateNetworks();
 });
 
