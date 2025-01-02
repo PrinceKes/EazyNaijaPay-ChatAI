@@ -5,89 +5,82 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Buy Data</title>
   <link rel="stylesheet" href="../css/buy-data.css">
-</head>
-<body>
-  <!-- Header Section -->
-  <header class="header">
-    <a href="./Dashboard.html" class="back-btn">&#8592; <span>Back</span></a>
-    <h1 class="title">Available data networks to buy</h1>
-    <a href="#" class="chat-btn">
-      <img src="../assets/chat-icon.png" alt="Chat Icon">
-    </a>
-  </header>
+  </head>
+  <body>
+    <!-- Header Section -->
+    <header class="header">
+      <a href="../pages/Dashboard.html" class="back-btn">&#8592; <span>Back</span></a>
+      <h1 class="title">Available Data Networks to Buy</h1>
+      <a href="#" class="chat-btn">
+        <img src="../assets/chat-icon.png" alt="Chat Icon">
+      </a>
+    </header>
 
-
-  <!-- Network Dropdown -->
-  <div class="input-group">
-    <label class="dropdown-label"> 
-      <img src="../assets/mtn.png" alt="Network Icon" id="selected-icon" class="network-icon">
-      <select id="network-dropdown" class="dropdown">
-        <option value="mtn" data-icon="../assets/mtn.png">MTN</option>
-        <option value="glo" data-icon="../assets/glo-icon.png">GLO</option>
-        <option value="9mobile" data-icon="../assets/9mobile-icon.png">9 Mobile</option>
-        <option value="airtel" data-icon="../assets/airtel-icon.png">Airtel</option>
-      </select>
-    </label>
-  </div>
-
-
-
-  <!-- Main Content -->
-  <section class="container">
-
-    <!-- Phone Number -->
-    <div class="input-group">
-      <label for="phone-number" class="label-text">Phone Number</label>
-      <input type="text" id="phone-number" placeholder="Enter Destination Phone Number" class="input-field">
-      <img src="../assets/phone.png" alt="Phone Icon" class="field-icon">
-    </div>
-
-    <!-- Airtime Amount -->
-    <!-- Airtime Amount -->
-    <div class="input-group">
-      <label for="amount" class="label-text">Airtime Amount</label>
-      <div class="input-wrapper">
-        <span class="currency-icon">₦</span>
-        <input 
-          type="text" 
-          id="amount" 
-          value="0.00" 
-          class="input-field" 
-          onfocus="enableInput(this)" 
-          onblur="disableInput(this)" 
-          oninput="validateAmount(this)" 
-          readonly
-        >
-        
+    <!-- Main Content -->
+    <section class="container">
+      <!-- Network Dropdown -->
+      <div class="input-group">
+        <label class="dropdown-label">
+          <img src="../assets/mtn.png" alt="Network Icon" id="selected-icon" class="network-icon">
+          <select id="network-dropdown" class="dropdown">
+            <option value="mtn" data-icon="../assets/mtn.png">MTN Network Selected</option>
+            <option value="glo" data-icon="../assets/glo-icon.png">GLO</option>
+            <option value="9mobile" data-icon="../assets/9mobile-icon.png">9 Mobile</option>
+            <option value="airtel" data-icon="../assets/airtel-icon.png">Airtel</option>
+          </select>
+        </label>
       </div>
-      
-      <img src="../assets/naira-icon.png" alt="Currency Icon" class="field-icon">
-    </div>
 
-    <!-- Amount Options -->
-    <div class="amount-options">
-      <button class="amount-btn" onclick="setAmount(500)">₦ 500</button>
-      <button class="amount-btn" onclick="setAmount(1000)">₦ 1,000</button>
-      <button class="amount-btn" onclick="setAmount(1500)">₦ 1,500</button>
-      <button class="amount-btn" onclick="setAmount(2500)">₦ 2,500</button>
-    </div>
-
-    <!-- Verify Pin -->
-    <div class="pin-section">
-      <label class="label-text">Verify Pin</label>
-      <div class="pin-inputs">
-        <input type="password" maxlength="1" class="pin-input">
-        <input type="password" maxlength="1" class="pin-input">
-        <input type="password" maxlength="1" class="pin-input">
-        <input type="password" maxlength="1" class="pin-input">
+      <!-- Phone Number -->
+      <div class="input-group">
+        <label for="phone-number" class="label-text">Phone Number</label>
+        <input type="text" id="phone-number" placeholder="Enter Destination Phone Number" class="input-field">
+        <img src="../assets/phone.png" alt="Phone Icon" class="field-icon">
       </div>
-    </div>
 
-    <!-- Continue Button -->
-    <button class="continue-btn">Continue to pay</button>
-  </section>
+      <!-- Select Preferable Plan -->
+      <div class="input-group">
+        <label for="preferable-plan" class="label-text">Select Preferable Plan</label>
+        <select id="preferable-plan" class="dropdown">
+          <option value="" disabled selected>Choose your desired plan</option>
+          <option value="500mb">500MB - ₦100</option>
+          <option value="1gb">1GB - ₦200 (30 Days)</option>
+          <option value="2gb">2GB - ₦500 (30 Days)</option>
+          <option value="5gb">5GB - ₦1,000 (30 Days)</option>
+        </select>
+      </div>
 
-  <!-- Bottom Navigation -->
+      <!-- Amount to Pay -->
+      <div class="input-group">
+        <label for="amount-to-pay" class="label-text">Amount to Pay</label>
+        <div class="input-wrapper">
+          <span class="currency-icon">₦</span>
+          <input
+            type="text"
+            id="amount-to-pay"
+            placeholder="0.00"
+            class="input-field"
+            readonly
+          >
+        </div>
+      </div>
+
+      <!-- Verify Pin -->
+      <div id="verify-pin" class="pin-section">
+        <label class="label-text">Verify Pin</label>
+        <div class="pin-inputs">
+          <input type="password" maxlength="1" id="pin1" class="pin-input" oninput="moveToNext(this, 'pin2')">
+          <input type="password" maxlength="1" id="pin2" class="pin-input" oninput="moveToNext(this, 'pin3')">
+          <input type="password" maxlength="1" id="pin3" class="pin-input" oninput="moveToNext(this, 'pin4')">
+          <input type="password" maxlength="1" id="pin4" class="pin-input">
+        </div>
+      </div>
+
+      <!-- Continue Button -->
+      <button class="continue-btn">Continue to Pay</button>
+    </section>
+
+  <!-- Bottom Navigation
   <nav class="bottom-nav">
     <a href="dashboard.html" class="nav-item">
       <img src="../assets/home.png" alt="Home">
@@ -98,7 +91,17 @@
     <a href="#" class="nav-item">
       <img src="../assets/settings.png" alt="Settings">
     </a>
-  </nav>
+  </nav> -->
+
+    <!-- script for making pin interactive -->
+    <script>
+      function moveToNext(current, nextID) {
+          if (current.value.length >= 1) {
+              document.getElementById(nextID).focus();
+          }
+      }
+    </script>
+
 
   <!-- JavaScript -->
   <script>

@@ -64,6 +64,15 @@ body {
   outline: none;
 }
 
+.dropdown {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  padding-right: 20px;
+}
+
 .field-icon {
   position: absolute;
   right: 10px;
