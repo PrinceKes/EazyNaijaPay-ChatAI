@@ -68,6 +68,17 @@ document.querySelector(".continue-btn").addEventListener("click", async () => {
   }
 });
 
+const airtimeResponse = await fetch(apiUrl, { method: "GET" });
+const airtimeData = await airtimeResponse.json();
+
+if (airtimeResponse.ok && airtimeData.code === "success") {
+  alert(`Airtime purchase successful: ₦${amount} for ${phone}`);
+} else {
+  console.error("API Response:", airtimeData); // Log full response
+  alert(`Failed to process airtime: ${airtimeData.message || "Unknown error"}`);
+}
+
+
 // Function to handle amount button clicks
 function setAmount(value) {
   const amountInput = document.getElementById("amount");
