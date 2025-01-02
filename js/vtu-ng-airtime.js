@@ -1,6 +1,7 @@
-// Define constants for the API endpoint and authorization token
-const CRESTVTU_API_URL = "https://crestvtu.com/api/topup/";
-const AUTHORIZATION_TOKEN = "7395a91d4c6693cacbb6631a6457fa2567bb4cf4";
+// Define constants for admin credentials and VTU.ng API endpoint
+const ADMIN_USERNAME = "Strongnationdev";
+const ADMIN_PASSWORD = "Adeboye200312";
+const EBILLS_BASE_URL = "https://vtu.ng/wp-json/api/v1";
 
 document.querySelector("#paynow").addEventListener("click", async () => {
   try {
@@ -11,7 +12,6 @@ document.querySelector("#paynow").addEventListener("click", async () => {
     const pinInputs = document.querySelectorAll(".pin-input");
     const userPin = Array.from(pinInputs).map(input => input.value).join("");
 
-    // Validate input fields
     if (!network || !phone || isNaN(amount) || userPin.length !== 4) {
       alert("Please fill all fields correctly.");
       return;
@@ -23,7 +23,6 @@ document.querySelector("#paynow").addEventListener("click", async () => {
       return;
     }
 
-    // Fetch user details
     const userResponse = await fetch(`https://eazynaijapay-server.onrender.com/Verified_Users/${userId}`);
     const userData = await userResponse.json();
 
@@ -35,7 +34,6 @@ document.querySelector("#paynow").addEventListener("click", async () => {
     const userBalance = userData.user.Balance;
     const storedPin = userData.user.User_pin;
 
-    // Check user balance and PIN
     if (userBalance < amount) {
       alert("Insufficient balance. Please top up your wallet.");
       return;
@@ -46,32 +44,15 @@ document.querySelector("#paynow").addEventListener("click", async () => {
       return;
     }
 
-    // Prepare the API payload
-    const payload = {
-      network: network,
-      amount: amount,
-      mobile_number: phone,
-      Ported_number: true,
-      airtime_type: "VTU"
-    };
+    const apiUrl = `${EBILLS_BASE_URL}/airtime?username=${ADMIN_USERNAME}&password=${ADMIN_PASSWORD}&phone=${phone}&network_id=${network}&amount=${amount}`;
 
-    // Make the POST request to the API
-    const response = await fetch(CRESTVTU_API_URL, {
-      method: "POST",
-      headers: {
-        "Authorization": `Token ${AUTHORIZATION_TOKEN}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    });
+    const airtimeResponse = await fetch(apiUrl, { method: "GET" });
+    const airtimeData = await airtimeResponse.json();
 
-    const responseData = await response.json();
-
-    // Handle API response
-    if (responseData.code === "success") {
+    if (airtimeData.code === "success") {
       alert(`Airtime purchase successful: ₦${amount} for ${phone}`);
     } else {
-      alert(`Failed to process airtime: ${responseData.message || "Unknown error"}`);
+      alert(`Failed to process airtime: ${airtimeData.message}`);
     }
   } catch (error) {
     console.error("Error processing airtime purchase:", error);
