@@ -3,6 +3,10 @@ const ADMIN_USERNAME = "Enoch";
 const ADMIN_PASSWORD = "Adeboye@02";
 const EBILLS_BASE_URL = "https://ebills.africa/wp-json/api/v1";
 
+const airtimeResponse = await fetch(apiUrl, { method: "GET" });
+const airtimeData = await airtimeResponse.json();
+
+
 // Function to handle "Continue to Pay" button click
 document.querySelector(".continue-btn").addEventListener("click", async () => {
   try {
@@ -57,26 +61,27 @@ document.querySelector(".continue-btn").addEventListener("click", async () => {
     const airtimeData = await airtimeResponse.json();
 
     // Handle API response
-    if (airtimeData.code === "success") {
-      alert(`Airtime purchase successful: ₦${amount} for ${phone}`);
-    } else {
-      alert(`Failed to process airtime: ${airtimeData.message}`);
-    }
+    if (airtimeResponse.ok && airtimeData.code === "success") {
+        alert(`Airtime purchase successful: ₦${amount} for ${phone}`);
+      } else {
+        console.error("API Response:", airtimeData); // Log full response
+        alert(`Failed to process airtime: ${airtimeData.message || "Unknown error"}`);
+      }
   } catch (error) {
     console.error("Error processing airtime purchase:", error);
     alert("An unexpected error occurred. Please try again later.");
   }
 });
 
-const airtimeResponse = await fetch(apiUrl, { method: "GET" });
-const airtimeData = await airtimeResponse.json();
+// const airtimeResponse = await fetch(apiUrl, { method: "GET" });
+// const airtimeData = await airtimeResponse.json();
 
-if (airtimeResponse.ok && airtimeData.code === "success") {
-  alert(`Airtime purchase successful: ₦${amount} for ${phone}`);
-} else {
-  console.error("API Response:", airtimeData); // Log full response
-  alert(`Failed to process airtime: ${airtimeData.message || "Unknown error"}`);
-}
+// if (airtimeResponse.ok && airtimeData.code === "success") {
+//   alert(`Airtime purchase successful: ₦${amount} for ${phone}`);
+// } else {
+//   console.error("API Response:", airtimeData); // Log full response
+//   alert(`Failed to process airtime: ${airtimeData.message || "Unknown error"}`);
+// }
 
 
 // Function to handle amount button clicks
