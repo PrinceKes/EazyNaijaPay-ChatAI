@@ -1,7 +1,7 @@
 // Define constants for admin credentials and eBills API endpoint
-const ADMIN_USERNAME = "enoch";
+const ADMIN_USERNAME = "Strongnationdev";
 const ADMIN_PASSWORD = "Adeboye200312";
-const EBILLS_BASE_URL = "https://ebills.africa/wp-json/api/v1"; // Confirm this base URL
+const EBILLS_BASE_URL = "https://vtu.ng/wp-json/api/v1";
 
 // Function to handle "Continue to Pay" button click
 document.querySelector("#paynow").addEventListener("click", async () => {
