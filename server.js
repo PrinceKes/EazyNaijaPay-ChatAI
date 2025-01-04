@@ -1,6 +1,13 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+
+// for husmodata api
+const express = require("express");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const fetch = require("node-fetch");
+
 const path = require('path');
 const cors = require('cors');
 const VerifiedUser = require('./models/Inner');
@@ -21,6 +28,11 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
+
+// for husmodata cors
+const API_URL = "https://www.husmodata.com/api/topup/";
+const AUTH_TOKEN = "bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec";
+
 
 const MONGO_URI = "mongodb+srv://EazyNaijaPay:Ade2003@eazynaijapay.asnqh.mongodb.net/EazyNaijaPay_Bot?retryWrites=true&w=majority";
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -206,6 +218,32 @@ app.get('/Verified_Users/:User_id/profile_picture', async (req, res) => {
 });
 
 
+
+
+
+
+
+
+// For husmodata api CORS
+app.post("/proxy/topup", async (req, res) => {
+    try {
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Authorization": `Token ${AUTH_TOKEN}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(req.body),
+        });
+
+        const data = await response.json();
+        console.log("Husmodata API Response:", data); // Log API response
+        res.status(response.status).json(data);
+    } catch (error) {
+        console.error("Error in proxy:", error);
+        res.status(500).json({ error: "Failed to fetch data from API." });
+    }
+});
 
 
 
