@@ -93,3 +93,31 @@ const plans = {
 
     
 // export default plans;
+
+
+
+
+
+
+
+
+
+
+// const plans = {
+//   mtn: [
+//     { id: "500", name: "MTN SME Data 500MB – 30 Days", price: 189 },
+//   ],
+//   glo: [
+//     { id: "glo100x", name: "Glo Data 1GB – 5 Nights", price: 98 },
+//   ],
+//   airtel: [
+//     { id: "AIRTEL500MB", name: "Airtel Data 500MB (Gift) – 30 Days", price: 189 },
+
+//   ],
+//   etisalat: [
+//     { id: "9MOB1000", name: "9mobile Data 1GB – 30 Days", price: 979 },
+//   ],
+// };
+
+// export default plans;
+

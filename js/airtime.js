@@ -1,111 +1,115 @@
-// Define constants for the API endpoint and authorization token
-const CRESTVTU_API_URL = "https://crestvtu.com/api/topup/";
-const AUTHORIZATION_TOKEN = "7395a91d4c6693cacbb6631a6457fa2567bb4cf4";
+// airtime.js
 
-document.querySelector("#paynow").addEventListener("click", async () => {
-  try {
-    const networkDropdown = document.getElementById("network-dropdown");
-    const network = networkDropdown.value;
-    const phone = document.getElementById("phone-number").value.trim();
+const API_BASE_URL = "https://eazynaijapay-server.onrender.com/Verified_Users";
+const AIRTIME_API_URL = "https://www.husmodata.com/api/topup/";
+const AUTH_TOKEN = "bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec";
+
+// Retrieve user_id from local storage
+const userId = localStorage.getItem("user_id") || localStorage.getItem("User_id");
+if (!userId) {
+    alert("User not authenticated. Please log in again.");
+    window.location.href = "/login.html"; // Redirect to login if no user_id
+}
+
+// Function to validate PIN
+async function validatePin(pin) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/${userId}`);
+        if (!response.ok) throw new Error("Failed to validate PIN.");
+
+        const data = await response.json();
+        return data.User_pin === pin;
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+}
+
+// Function to check balance
+async function checkBalance(amount) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/${userId}/Balance`);
+        if (!response.ok) throw new Error("Failed to check balance.");
+
+        const data = await response.json();
+        return data.Balance >= amount;
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+}
+
+// Function to process airtime purchase
+async function buyAirtime(network, amount, phone) {
+    try {
+        const response = await fetch(AIRTIME_API_URL, {
+            method: "POST",
+            headers: {
+                "Authorization": `Token ${AUTH_TOKEN}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                network: network,
+                amount: amount,
+                mobile_number: phone,
+                Ported_number: true,
+                airtime_type: "VTU",
+            }),
+        });
+
+        if (!response.ok) throw new Error("Failed to process airtime purchase.");
+
+        alert("Airtime purchase successful!");
+    } catch (error) {
+        console.error(error);
+        alert("Airtime purchase failed. Please try again.");
+    }
+}
+
+// Handle "Continue to Pay" button click
+document.getElementById("paynow").addEventListener("click", async () => {
+    const network = document.getElementById("network-dropdown").value;
+    const phone = document.getElementById("phone-number").value;
     const amount = parseFloat(document.getElementById("amount").value);
-    const pinInputs = document.querySelectorAll(".pin-input");
-    const userPin = Array.from(pinInputs).map(input => input.value).join("");
 
-    // Validate input fields
-    if (!network || !phone || isNaN(amount) || userPin.length !== 4) {
-      alert("Please fill all fields correctly.");
-      return;
+    // Gather PIN input
+    const pin = [
+        document.getElementById("pin1").value,
+        document.getElementById("pin2").value,
+        document.getElementById("pin3").value,
+        document.getElementById("pin4").value,
+    ].join("");
+
+    if (!network || !phone || isNaN(amount) || pin.length !== 4) {
+        alert("Please fill in all fields correctly.");
+        return;
     }
 
-    const userId = localStorage.getItem("user_id") || localStorage.getItem("User_id");
-    if (!userId) {
-      alert("User ID not found in local storage.");
-      return;
+    // Validate PIN
+    const isPinValid = await validatePin(pin);
+    if (!isPinValid) {
+        alert("Invalid PIN. Please try again.");
+        return;
     }
 
-    // Fetch user details
-    const userResponse = await fetch(`https://eazynaijapay-server.onrender.com/Verified_Users/${userId}`);
-    const userData = await userResponse.json();
-
-    if (!userData.success) {
-      alert("Failed to fetch user details.");
-      return;
+    // Check balance
+    const hasSufficientBalance = await checkBalance(amount);
+    if (!hasSufficientBalance) {
+        alert("Insufficient balance.");
+        return;
     }
 
-    const userBalance = userData.user.Balance;
-    const storedPin = userData.user.User_pin;
-
-    // Check user balance and PIN
-    if (userBalance < amount) {
-      alert("Insufficient balance. Please top up your wallet.");
-      return;
-    }
-
-    if (userPin !== storedPin) {
-      alert("Invalid PIN. Please try again.");
-      return;
-    }
-
-    // Prepare the API payload
-    const payload = {
-      network: network,
-      amount: amount,
-      mobile_number: phone,
-      Ported_number: true,
-      airtime_type: "VTU"
-    };
-
-    // Make the POST request to the API
-    const response = await fetch(CRESTVTU_API_URL, {
-      method: "POST",
-      headers: {
-        "Authorization": `Token ${AUTHORIZATION_TOKEN}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    });
-
-    const responseData = await response.json();
-
-    // Handle API response
-    if (responseData.code === "success") {
-      alert(`Airtime purchase successful: ₦${amount} for ${phone}`);
-    } else {
-      alert(`Failed to process airtime: ${responseData.message || "Unknown error"}`);
-    }
-  } catch (error) {
-    console.error("Error processing airtime purchase:", error);
-    alert("An unexpected error occurred. Please try again later.");
-  }
+    // Process airtime purchase
+    await buyAirtime(network, amount, phone);
 });
 
+// Helper functions for UI interactions
 function setAmount(value) {
-  const amountInput = document.getElementById("amount");
-  amountInput.value = value.toFixed(2);
-  enableInput(amountInput);
+    document.getElementById("amount").value = value.toFixed(2);
 }
 
-function enableInput(input) {
-  input.readOnly = false;
-}
-
-function disableInput(input) {
-  if (!input.value.trim()) {
-    input.readOnly = true;
-  }
-}
-
-function validateAmount(input) {
-  const value = parseFloat(input.value);
-  if (isNaN(value) || value < 0) {
-    input.value = "0.00";
-  } else {
-    input.value = value.toFixed(2);
-  }
-}
-
-function moveToNext(current, nextId) {
-  if (current.value.length === 1) {
-    document.getElementById(nextId).focus();
-  }
+function moveToNext(current, next) {
+    if (current.value.length === 1) {
+        document.getElementById(next)?.focus();
+    }
 }
