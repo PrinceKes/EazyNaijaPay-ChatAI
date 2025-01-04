@@ -1,3 +1,4 @@
+// Constants
 const API_BASE_URL = "https://eazynaijapay-server.onrender.com/Verified_Users";
 const AIRTIME_API_URL = "https://www.husmodata.com/api/topup/";
 const AUTH_TOKEN = "bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec";
@@ -7,7 +8,7 @@ const networkMap = {
     "mtn": 1,
     "glo": 2,
     "etisalat": 3,
-    "airtel": 4
+    "airtel": 4,
 };
 
 // Retrieve user_id from local storage
@@ -49,38 +50,39 @@ async function checkBalance(amount) {
     }
 }
 
+// Function to buy airtime
 async function buyAirtime(network, amount, phone) {
     try {
-        // Map network value to network ID
+        // Map network name to network ID
         const networkId = networkMap[network];
         if (!networkId) {
             alert("Invalid network selected.");
             return;
         }
 
-        const response = await fetch("http://localhost:5000/proxy/topup", {
+        const response = await fetch(AIRTIME_API_URL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Token ${AUTH_TOKEN}`
+                "Authorization": `Token ${AUTH_TOKEN}`,
             },
             body: JSON.stringify({
-                network: networkId,       // Use the mapped network ID
+                network: networkId,
                 amount: amount,
                 mobile_number: phone,
-                Ported_number: true,    // Matches API documentation
-                airtime_type: "VTU",    // Matches API documentation
+                Ported_number: true,
+                airtime_type: "VTU",
             }),
         });
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error("Response Error Text:", errorText); // Log response error text
+            console.error("Response Error Text:", errorText);
             throw new Error("Failed to process airtime purchase.");
         }
 
         const data = await response.json();
-        console.log("Airtime Purchase Response:", data); // Log response from API
+        console.log("Airtime Purchase Response:", data);
         alert("Airtime purchase successful!");
     } catch (error) {
         console.error("Error processing airtime purchase:", error);
@@ -90,7 +92,7 @@ async function buyAirtime(network, amount, phone) {
 
 // Handle "Continue to Pay" button click
 document.getElementById("paynow").addEventListener("click", async () => {
-    const network = document.getElementById("network-select").value; // Use correct dropdown ID
+    const network = document.getElementById("network-dropdown").value; // Updated ID to match dropdown
     const phone = document.getElementById("phone-number").value.trim();
     const amount = parseFloat(document.getElementById("amount").value);
 
