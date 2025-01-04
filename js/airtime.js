@@ -16,7 +16,9 @@ async function validatePin(pin) {
         if (!response.ok) throw new Error("Failed to validate PIN.");
 
         const data = await response.json();
-        return data.User_pin === pin;
+        if (!data.success) throw new Error("Invalid user data.");
+
+        return data.user.User_pin === pin;
     } catch (error) {
         console.error("Error validating PIN:", error);
         return false;
@@ -26,11 +28,13 @@ async function validatePin(pin) {
 // Function to check balance
 async function checkBalance(amount) {
     try {
-        const response = await fetch(`${API_BASE_URL}/${userId}/Balance`);
+        const response = await fetch(`${API_BASE_URL}/${userId}`);
         if (!response.ok) throw new Error("Failed to check balance.");
 
         const data = await response.json();
-        return data.Balance >= amount;
+        if (!data.success) throw new Error("Invalid user data.");
+
+        return data.user.Balance >= amount;
     } catch (error) {
         console.error("Error checking balance:", error);
         return false;
