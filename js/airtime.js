@@ -3,12 +3,12 @@ const API_BASE_URL = "https://eazynaijapay-server.onrender.com/Verified_Users";
 const AIRTIME_API_URL = "https://www.husmodata.com/api/topup/";
 const AUTH_TOKEN = "bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec";
 
-// Mapping of network names to network IDs
+// Mapping of numeric string network IDs to network names (for reference if needed)
 const networkMap = {
-    "MTN": 1,
-    "GLO": 2,
-    "9MOBILE": 3,
-    "AIRTEL": 4,
+    "1": "MTN",
+    "2": "GLO",
+    "3": "9MOBILE",
+    "4": "AIRTEL",
 };
 
 // Retrieve user_id from local storage
@@ -51,15 +51,8 @@ async function checkBalance(amount) {
 }
 
 // Function to buy airtime
-async function buyAirtime(network, amount, phone) {
+async function buyAirtime(networkId, amount, phone) {
     try {
-        // Map network name to network ID
-        const networkId = networkMap[network];
-        if (!networkId) {
-            alert("Invalid network selected.");
-            return;
-        }
-
         const response = await fetch(AIRTIME_API_URL, {
             method: "POST",
             headers: {
@@ -92,7 +85,7 @@ async function buyAirtime(network, amount, phone) {
 
 // Handle "Continue to Pay" button click
 document.getElementById("paynow").addEventListener("click", async () => {
-    const network = document.getElementById("network-dropdown").value; // Updated ID to match dropdown
+    const network = document.getElementById("network-dropdown").value; // Network ID from the dropdown
     const phone = document.getElementById("phone-number").value.trim();
     const amount = parseFloat(document.getElementById("amount").value);
 
