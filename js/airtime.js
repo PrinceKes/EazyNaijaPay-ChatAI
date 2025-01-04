@@ -1,5 +1,3 @@
-// airtime.js
-
 const API_BASE_URL = "https://eazynaijapay-server.onrender.com/Verified_Users";
 const AIRTIME_API_URL = "https://www.husmodata.com/api/topup/";
 const AUTH_TOKEN = "bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec";
@@ -20,7 +18,7 @@ async function validatePin(pin) {
         const data = await response.json();
         return data.User_pin === pin;
     } catch (error) {
-        console.error(error);
+        console.error("Error validating PIN:", error);
         return false;
     }
 }
@@ -34,7 +32,7 @@ async function checkBalance(amount) {
         const data = await response.json();
         return data.Balance >= amount;
     } catch (error) {
-        console.error(error);
+        console.error("Error checking balance:", error);
         return false;
     }
 }
@@ -61,7 +59,7 @@ async function buyAirtime(network, amount, phone) {
 
         alert("Airtime purchase successful!");
     } catch (error) {
-        console.error(error);
+        console.error("Error processing airtime purchase:", error);
         alert("Airtime purchase failed. Please try again.");
     }
 }
@@ -69,7 +67,7 @@ async function buyAirtime(network, amount, phone) {
 // Handle "Continue to Pay" button click
 document.getElementById("paynow").addEventListener("click", async () => {
     const network = document.getElementById("network-dropdown").value;
-    const phone = document.getElementById("phone-number").value;
+    const phone = document.getElementById("phone-number").value.trim();
     const amount = parseFloat(document.getElementById("amount").value);
 
     // Gather PIN input
