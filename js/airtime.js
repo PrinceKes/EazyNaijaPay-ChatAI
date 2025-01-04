@@ -5,10 +5,10 @@ const AUTH_TOKEN = "bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec";
 
 // Mapping of network names to network IDs
 const networkMap = {
-    "mtn": 1,
-    "glo": 2,
-    "etisalat": 3,
-    "airtel": 4,
+    "MTN": 1,
+    "GLO": 2,
+    "9MOBILE": 3,
+    "AIRTEL": 4,
 };
 
 // Retrieve user_id from local storage
