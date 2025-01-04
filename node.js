@@ -23,12 +23,14 @@ app.post("/proxy/topup", async (req, res) => {
         });
 
         const data = await response.json();
+        console.log("Husmodata API Response:", data); // Log API response
         res.status(response.status).json(data);
     } catch (error) {
         console.error("Error in proxy:", error);
         res.status(500).json({ error: "Failed to fetch data from API." });
     }
 });
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

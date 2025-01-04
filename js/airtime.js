@@ -47,29 +47,35 @@ async function checkBalance(amount) {
 
 async function buyAirtime(network, amount, phone) {
   try {
-      const response = await fetch("http://localhost:5000/proxy/topup", { // Use localhost URL for testing
+      const response = await fetch("http://localhost:5000/proxy/topup", {
           method: "POST",
           headers: {
               "Content-Type": "application/json",
           },
           body: JSON.stringify({
-              network: network,
+              network: network,       // Ensure correct key names
               amount: amount,
               mobile_number: phone,
-              Ported_number: true,
-              airtime_type: "VTU",
+              Ported_number: true,    // Matches API documentation
+              airtime_type: "VTU",    // Matches API documentation
           }),
       });
 
-      if (!response.ok) throw new Error("Failed to process airtime purchase.");
+      if (!response.ok) {
+          const errorText = await response.text();
+          console.error("Response Error Text:", errorText); // Log response error text
+          throw new Error("Failed to process airtime purchase.");
+      }
 
       const data = await response.json();
+      console.log("Airtime Purchase Response:", data); // Log response from API
       alert("Airtime purchase successful!");
   } catch (error) {
       console.error("Error processing airtime purchase:", error);
       alert("Airtime purchase failed. Please try again.");
   }
 }
+
 
 
 
