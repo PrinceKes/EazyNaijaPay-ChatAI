@@ -1,4 +1,4 @@
-const DATA_PLANS = {
+const plans = {
   MTN: [
     { plan_id: 354, type: "SME", amount: "₦1295.0", size: "5.0 GB", validity: "1 month" },
     { plan_id: 230, type: "SME", amount: "₦780.0", size: "3.0 GB", validity: "1 month" },
@@ -51,21 +51,4 @@ const DATA_PLANS = {
   ],
 };
 
-// Populate data plans when a network is selected
-document.getElementById("network-select").addEventListener("change", function () {
-  const selectedNetwork = this.options[this.selectedIndex].text; // Get selected network name
-  const plansDropdown = document.getElementById("preferable-plan");
-
-  // Clear existing options
-  plansDropdown.innerHTML = '<option value="" disabled selected>Choose your desired plan</option>';
-
-  if (dataPlans[selectedNetwork]) {
-    // Populate plans for the selected network
-    dataPlans[selectedNetwork].forEach((plan, index) => {
-      const option = document.createElement("option");
-      option.value = index; // Assign an index as value
-      option.text = `${selectedNetwork} ${plan.type} - ${plan.size} ${plan.validity}`;
-      plansDropdown.appendChild(option);
-    });
-  }
-});
+export default plans
