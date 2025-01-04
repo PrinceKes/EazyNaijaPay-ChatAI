@@ -1,6 +1,6 @@
 // Constants
 const API_BASE_URL = "https://eazynaijapay-server.onrender.com/Verified_Users";
-const AIRTIME_API_URL = "https://www.husmodata.com/api/topup/";
+const AIRTIME_API_URL = "http://localhost:5000/proxy/topup";
 const AUTH_TOKEN = "bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec";
 
 // Mapping of numeric string network IDs to network names (for reference if needed)
