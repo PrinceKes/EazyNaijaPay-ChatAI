@@ -41,32 +41,69 @@ async function checkBalance(amount) {
     }
 }
 
-// Function to process airtime purchase
+
+
+
+
 async function buyAirtime(network, amount, phone) {
-    try {
-        const response = await fetch(AIRTIME_API_URL, {
-            method: "POST",
-            headers: {
-                "Authorization": `Token ${AUTH_TOKEN}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                network: network,
-                amount: amount,
-                mobile_number: phone,
-                Ported_number: true,
-                airtime_type: "VTU",
-            }),
-        });
+  try {
+      const response = await fetch("http://localhost:5000/proxy/topup", { // Use localhost URL for testing
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+              network: network,
+              amount: amount,
+              mobile_number: phone,
+              Ported_number: true,
+              airtime_type: "VTU",
+          }),
+      });
 
-        if (!response.ok) throw new Error("Failed to process airtime purchase.");
+      if (!response.ok) throw new Error("Failed to process airtime purchase.");
 
-        alert("Airtime purchase successful!");
-    } catch (error) {
-        console.error("Error processing airtime purchase:", error);
-        alert("Airtime purchase failed. Please try again.");
-    }
+      const data = await response.json();
+      alert("Airtime purchase successful!");
+  } catch (error) {
+      console.error("Error processing airtime purchase:", error);
+      alert("Airtime purchase failed. Please try again.");
+  }
 }
+
+
+
+
+// // Function to process airtime purchase
+// async function buyAirtime(network, amount, phone) {
+//     try {
+//         const response = await fetch(AIRTIME_API_URL, {
+//             method: "POST",
+//             headers: {
+//                 "Authorization": `Token ${AUTH_TOKEN}`,
+//                 "Content-Type": "application/json",
+//             },
+//             body: JSON.stringify({
+//                 network: network,
+//                 amount: amount,
+//                 mobile_number: phone,
+//                 Ported_number: true,
+//                 airtime_type: "VTU",
+//             }),
+//         });
+
+//         if (!response.ok) throw new Error("Failed to process airtime purchase.");
+
+//         alert("Airtime purchase successful!");
+//     } catch (error) {
+//         console.error("Error processing airtime purchase:", error);
+//         alert("Airtime purchase failed. Please try again.");
+//     }
+// }
+
+
+
+
 
 // Handle "Continue to Pay" button click
 document.getElementById("paynow").addEventListener("click", async () => {
