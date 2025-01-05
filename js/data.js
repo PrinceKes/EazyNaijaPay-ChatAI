@@ -10,9 +10,9 @@ let userId = localStorage.getItem('user_id'); // Fetch user_id from local storag
 // Get plans based on selected network
 networkSelect.addEventListener('change', () => {
   const selectedNetworkId = networkSelect.value;
-  
+
   preferablePlanSelect.innerHTML = '<option value="" disabled selected>Choose your desired plan</option>';
-  
+
   let selectedPlans = [];
   if (selectedNetworkId == '1') {
     selectedPlans = plans.MTN;
@@ -39,7 +39,7 @@ preferablePlanSelect.addEventListener('change', (e) => {
 
   let selectedPlan = null;
   let selectedPlans = [];
-  
+
   if (selectedNetworkId == '1') {
     selectedPlans = plans.MTN;
   } else if (selectedNetworkId == '2') {
@@ -51,14 +51,11 @@ preferablePlanSelect.addEventListener('change', (e) => {
   }
 
   selectedPlan = selectedPlans.find(plan => plan.plan_id == selectedPlanId);
-  
+
   if (selectedPlan) {
     amountToPay.value = selectedPlan.amount.replace("₦", "");
   }
 });
-
-
-
 
 payNowButton.addEventListener('click', () => {
   const selectedNetworkId = networkSelect.value;
@@ -80,8 +77,12 @@ payNowButton.addEventListener('click', () => {
   fetch(`https://eazynaijapay-server.onrender.com/Verified_Users/${userId}`)
     .then(response => response.json())
     .then(data => {
-      // Ensure that the pin is being compared correctly (trim any unwanted spaces)
-      if (data.success && data.user.User_pin.trim() !== pin.trim()) {
+      if (!data.success) {
+        alert('Error validating user information.');
+        return;
+      }
+
+      if (data.user.User_pin.trim() !== pin.trim()) {
         alert('Invalid Pin');
         return;
       }
@@ -90,6 +91,11 @@ payNowButton.addEventListener('click', () => {
       fetch(`https://eazynaijapay-server.onrender.com/Verified_Users/${userId}/Balance`)
         .then(response => response.json())
         .then(balanceData => {
+          if (!balanceData.success) {
+            alert('Error fetching balance. Please try again later.');
+            return;
+          }
+
           const userBalance = balanceData.balance;
           const selectedPlan = plans[selectedNetworkId].find(plan => plan.plan_id == selectedPlanId);
           const amount = parseFloat(selectedPlan.amount.replace('₦', '').trim());
@@ -134,7 +140,6 @@ payNowButton.addEventListener('click', () => {
               console.error('Error processing data purchase:', error);
               alert('Error occurred. Please try again later.');
             });
-
         })
         .catch(error => {
           console.error('Error fetching balance:', error);
@@ -146,13 +151,6 @@ payNowButton.addEventListener('click', () => {
       alert('Error validating pin. Please try again later.');
     });
 });
-
-
-
-
-
-
-
 
 
 
@@ -219,7 +217,9 @@ payNowButton.addEventListener('click', () => {
 //   }
 // });
 
-// // Proceed with the transaction
+
+
+
 // payNowButton.addEventListener('click', () => {
 //   const selectedNetworkId = networkSelect.value;
 //   const selectedPlanId = preferablePlanSelect.value;
@@ -240,7 +240,8 @@ payNowButton.addEventListener('click', () => {
 //   fetch(`https://eazynaijapay-server.onrender.com/Verified_Users/${userId}`)
 //     .then(response => response.json())
 //     .then(data => {
-//       if (data.User_pin !== pin) {
+//       // Ensure that the pin is being compared correctly (trim any unwanted spaces)
+//       if (data.success && data.user.User_pin.trim() !== pin.trim()) {
 //         alert('Invalid Pin');
 //         return;
 //       }
@@ -305,3 +306,4 @@ payNowButton.addEventListener('click', () => {
 //       alert('Error validating pin. Please try again later.');
 //     });
 // });
+
