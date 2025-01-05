@@ -60,9 +60,16 @@ preferablePlanSelect.addEventListener('change', (e) => {
 payNowButton.addEventListener('click', () => {
   const selectedNetworkId = networkSelect.value;
   const selectedPlanId = preferablePlanSelect.value;
-  const phoneNumber = document.getElementById('phone-number').value;
+  const phoneNumber = document.getElementById('phone-number').value;  // Capturing the phone number value here
   const pin = `${document.getElementById('pin1').value}${document.getElementById('pin2').value}${document.getElementById('pin3').value}${document.getElementById('pin4').value}`;
 
+  // Log the captured values to check
+  console.log('Phone Number:', phoneNumber);
+  console.log('Selected Network ID:', selectedNetworkId);
+  console.log('Selected Plan ID:', selectedPlanId);
+  console.log('Pin:', pin);
+
+  // Check if all required fields are filled out
   if (!selectedNetworkId || !selectedPlanId || !phoneNumber || !pin) {
     alert('Please complete all the fields and select a plan');
     return;
@@ -76,6 +83,11 @@ payNowButton.addEventListener('click', () => {
   // Log the network and plan selected
   console.log('Selected network ID:', selectedNetworkId);
   console.log('Selected plan ID:', selectedPlanId);
+
+  console.log('Network ID:', selectedNetworkId);
+  console.log('Plan ID:', selectedPlanId);
+  console.log('Phone Number:', phoneNumber);
+  console.log('Pin:', pin);
 
   // 1. Validate the pin with the API
   fetch(`https://eazynaijapay-server.onrender.com/Verified_Users/${userId}`)
@@ -136,7 +148,7 @@ payNowButton.addEventListener('click', () => {
             Body: requestBody
           });
 
-          
+
           fetch('https://www.husmodata.com/api/data/', {
             method: 'POST',
             headers: {
