@@ -57,6 +57,9 @@ preferablePlanSelect.addEventListener('change', (e) => {
   }
 });
 
+
+
+
 payNowButton.addEventListener('click', () => {
   const selectedNetworkId = networkSelect.value;
   const selectedPlanId = preferablePlanSelect.value;
@@ -79,15 +82,6 @@ payNowButton.addEventListener('click', () => {
     alert('Pin must be a 4-digit number.');
     return;
   }
-
-  // Log the network and plan selected
-  console.log('Selected network ID:', selectedNetworkId);
-  console.log('Selected plan ID:', selectedPlanId);
-
-  console.log('Network ID:', selectedNetworkId);
-  console.log('Plan ID:', selectedPlanId);
-  console.log('Phone Number:', phoneNumber);
-  console.log('Pin:', pin);
 
   // 1. Validate the pin with the API
   fetch(`https://eazynaijapay-server.onrender.com/Verified_Users/${userId}`)
@@ -116,7 +110,6 @@ payNowButton.addEventListener('click', () => {
           const userBalance = balanceData.balance;
           const selectedPlans = plans[selectedNetworkId];
           if (!selectedPlans) {
-            alert('Invalid network selection.');
             return;
           }
 
@@ -133,7 +126,7 @@ payNowButton.addEventListener('click', () => {
             return;
           }
 
-          // 3. If pin and balance are valid, process the data purchase
+          // 3. If pin and balance are valid, process the data purchase via proxy server
           const requestBody = {
             network: selectedNetworkId,
             mobile_number: phoneNumber,
@@ -141,18 +134,17 @@ payNowButton.addEventListener('click', () => {
             Ported_number: true
           };
 
-          console.log('Sending data purchase request...');
+          console.log('Sending data purchase request to proxy server...');
           console.log({
             Authorization: `Token ${'bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec'}`,
             ContentType: 'application/json',
             Body: requestBody
           });
 
-
-          fetch('https://www.husmodata.com/api/data/', {
+          // Send request to the proxy server
+          fetch('http://localhost:5000/proxy/topup', {
             method: 'POST',
             headers: {
-              'Authorization': 'Token bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec',
               'Content-Type': 'application/json'
             },
             body: JSON.stringify(requestBody)
@@ -169,7 +161,6 @@ payNowButton.addEventListener('click', () => {
               console.error('Error processing data purchase:', error);
               alert('Error occurred. Please try again later.');
             });
-          
         })
         .catch(error => {
           console.error('Error fetching balance:', error);
@@ -185,21 +176,19 @@ payNowButton.addEventListener('click', () => {
 
 
 
-
-
-
-
-
-
-
-
-
 // payNowButton.addEventListener('click', () => {
 //   const selectedNetworkId = networkSelect.value;
 //   const selectedPlanId = preferablePlanSelect.value;
-//   const phoneNumber = document.getElementById('phone-number').value;
+//   const phoneNumber = document.getElementById('phone-number').value;  // Capturing the phone number value here
 //   const pin = `${document.getElementById('pin1').value}${document.getElementById('pin2').value}${document.getElementById('pin3').value}${document.getElementById('pin4').value}`;
 
+//   // Log the captured values to check
+//   console.log('Phone Number:', phoneNumber);
+//   console.log('Selected Network ID:', selectedNetworkId);
+//   console.log('Selected Plan ID:', selectedPlanId);
+//   console.log('Pin:', pin);
+
+//   // Check if all required fields are filled out
 //   if (!selectedNetworkId || !selectedPlanId || !phoneNumber || !pin) {
 //     alert('Please complete all the fields and select a plan');
 //     return;
@@ -210,102 +199,112 @@ payNowButton.addEventListener('click', () => {
 //     return;
 //   }
 
+//   // Log the network and plan selected
+//   console.log('Selected network ID:', selectedNetworkId);
+//   console.log('Selected plan ID:', selectedPlanId);
 
-
-
-
+//   console.log('Network ID:', selectedNetworkId);
+//   console.log('Plan ID:', selectedPlanId);
+//   console.log('Phone Number:', phoneNumber);
+//   console.log('Pin:', pin);
 
 //   // 1. Validate the pin with the API
 //   fetch(`https://eazynaijapay-server.onrender.com/Verified_Users/${userId}`)
-//   .then(response => response.json())
-//   .then(data => {
-//     if (!data.success) {
-//       alert('Error validating user information.');
-//       return;
-//     }
+//     .then(response => response.json())
+//     .then(data => {
+//       if (!data.success) {
+//         alert('Error validating user information.');
+//         return;
+//       }
 
-//     if (data.user.User_pin.trim() !== pin.trim()) {
-//       alert('Invalid Pin');
-//       return;
-//     }
+//       if (data.user.User_pin.trim() !== pin.trim()) {
+//         alert('Invalid Pin');
+//         return;
+//       }
 
-//     // 2. Validate the balance
-//     fetch(`https://eazynaijapay-server.onrender.com/Verified_Users/${userId}/Balance`)
-//       .then(response => response.json())
-//       .then(balanceData => {
-//         if (!balanceData.success) {
-//           console.error('Error fetching balance:', balanceData.message);
-//           alert('Error fetching balance. Please try again later.');
-//           return;
-//         }
+//       // 2. Validate the balance
+//       fetch(`https://eazynaijapay-server.onrender.com/Verified_Users/${userId}/Balance`)
+//         .then(response => response.json())
+//         .then(balanceData => {
+//           if (!balanceData.success) {
+//             console.error('Error fetching balance:', balanceData.message);
+//             alert('Error fetching balance. Please try again later.');
+//             return;
+//           }
 
-//         const userBalance = balanceData.balance;
-//         // Check if plans[selectedNetworkId] exists
-//         const selectedPlans = plans[selectedNetworkId];
-//         if (!selectedPlans) {
-//           alert('Invalid network selection.');
-//           return;
-//         }
+//           const userBalance = balanceData.balance;
+//           const selectedPlans = plans[selectedNetworkId];
+//           if (!selectedPlans) {
+//             return;
+//           }
 
-//         const selectedPlan = selectedPlans.find(plan => plan.plan_id == selectedPlanId);
-//         if (!selectedPlan) {
-//           alert('Selected plan not found.');
-//           return;
-//         }
+//           const selectedPlan = selectedPlans.find(plan => plan.plan_id == selectedPlanId);
+//           if (!selectedPlan) {
+//             alert('Selected plan not found.');
+//             return;
+//           }
 
-//         const amount = parseFloat(selectedPlan.amount.replace('₦', '').trim());
+//           const amount = parseFloat(selectedPlan.amount.replace('₦', '').trim());
 
-//         if (userBalance < amount) {
-//           alert('Insufficient balance');
-//           return;
-//         }
+//           if (userBalance < amount) {
+//             alert('Insufficient balance');
+//             return;
+//           }
 
-//         // 3. If pin and balance are valid, process the data purchase
-//         const requestBody = {
-//           network: selectedNetworkId,
-//           mobile_number: phoneNumber,
-//           plan: selectedPlanId,
-//           Ported_number: true
-//         };
+//           // 3. If pin and balance are valid, process the data purchase
+//           const requestBody = {
+//             network: selectedNetworkId,
+//             mobile_number: phoneNumber,
+//             plan: selectedPlanId,
+//             Ported_number: true
+//           };
 
-//         console.log('Sending data purchase request...');
-//         console.log({
-//           Authorization: `Token ${'bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec'}`,
-//           ContentType: 'application/json',
-//           Body: requestBody
-//         });
-
-//         fetch('https://www.husmodata.com/api/data/', {
-//           method: 'POST',
-//           headers: {
-//             'Authorization': 'Token bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec',
-//             'Content-Type': 'application/json'
-//           },
-//           body: JSON.stringify(requestBody)
-//         })
-//           .then(response => response.json())
-//           .then(responseData => {
-//             if (responseData.status === 'success') {
-//               alert('Data purchase successful');
-//             } else {
-//               alert('Failed to purchase data');
-//             }
-//           })
-//           .catch(error => {
-//             console.error('Error processing data purchase:', error);
-//             alert('Error occurred. Please try again later.');
+//           console.log('Sending data purchase request...');
+//           console.log({
+//             Authorization: `Token ${'bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec'}`,
+//             ContentType: 'application/json',
+//             Body: requestBody
 //           });
-//       })
-//       .catch(error => {
-//         console.error('Error fetching balance:', error);
-//         alert('Error fetching balance. Please try again later.');
-//       });
-//   })
-//   .catch(error => {
-//     console.error('Error validating pin:', error);
-//     alert('Error validating pin. Please try again later.');
-//   });
+
+
+//           fetch('https://www.husmodata.com/api/data/', {
+//             method: 'POST',
+//             headers: {
+//               'Authorization': 'Token bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec',
+//               'Content-Type': 'application/json'
+//             },
+//             body: JSON.stringify(requestBody)
+//           })
+//             .then(response => response.json())
+//             .then(responseData => {
+//               if (responseData.status === 'success') {
+//                 alert('Data purchase successful');
+//               } else {
+//                 alert('Failed to purchase data');
+//               }
+//             })
+//             .catch(error => {
+//               console.error('Error processing data purchase:', error);
+//               alert('Error occurred. Please try again later.');
+//             });
+          
+//         })
+//         .catch(error => {
+//           console.error('Error fetching balance:', error);
+//           alert('Error fetching balance. Please try again later.');
+//         });
+//     })
+//     .catch(error => {
+//       console.error('Error validating pin:', error);
+//       alert('Error validating pin. Please try again later.');
+//     });
 // });
+
+
+
+
+
+
 
 
 
