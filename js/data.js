@@ -149,31 +149,32 @@ payNowButton.addEventListener('click', () => {
             body: JSON.stringify(requestBody)
           })
             .then(response => response.json())
-            .then(responseData => {
-              if (responseData.status === 'success') {
-                alert('Data purchase successful');
+            .then(apiResponse => {
+              if (apiResponse.success) {
+                alert('Data purchase successful!');
+                console.log('Response:', apiResponse);
+                // Optionally redirect the user or reset the form fields
               } else {
-                // Display error from API response
-                alert(responseData.message || 'Failed to purchase data');
+                // Display the error message directly from the API
+                alert(`Error: ${apiResponse.message || 'An unknown error occurred'}`);
               }
             })
             .catch(error => {
-              console.error('Error processing data purchase:', error);
-              alert('Error occurred. Please try again later.');
+              console.error('Error sending request to Husmodata API:', error);
+              alert('An error occurred while processing your request. Please try again later.');
             });
-        })
-        .catch(error => {
-          console.error('Error fetching balance:', error);
-          alert('Error fetching balance. Please try again later.');
-        });
-    })
-    .catch(error => {
-      console.error('Error validating pin:', error);
-      alert('Error validating pin. Please try again later.');
-    });
-});
-
-
+          })
+          .catch(error => {
+            console.error('Error fetching balance:', error);
+            alert('Error fetching balance. Please try again later.');
+          });
+      })
+      .catch(error => {
+        console.error('Error validating user information:', error);
+        alert('Error validating user information. Please try again later.');
+      });
+  });
+  
 
 
 
