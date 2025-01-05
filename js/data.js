@@ -136,6 +136,7 @@ payNowButton.addEventListener('click', () => {
             Body: requestBody
           });
 
+          
           fetch('https://www.husmodata.com/api/data/', {
             method: 'POST',
             headers: {
@@ -156,6 +157,7 @@ payNowButton.addEventListener('click', () => {
               console.error('Error processing data purchase:', error);
               alert('Error occurred. Please try again later.');
             });
+          
         })
         .catch(error => {
           console.error('Error fetching balance:', error);
