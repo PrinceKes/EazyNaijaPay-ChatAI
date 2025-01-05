@@ -134,7 +134,7 @@ payNowButton.addEventListener('click', () => {
 
           console.log('Sending data purchase request to Husmodata API...');
           console.log({
-            Authorization: `Token ${'8f00fa816b1e3b485baca8f44ae5d361ef803311'}`,
+            Authorization: `Token ${'bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec'}`,
             ContentType: 'application/json',
             Body: requestBody
           });
@@ -143,7 +143,7 @@ payNowButton.addEventListener('click', () => {
           fetch('https://www.husmodata.com/api/data/', {
             method: 'POST',
             headers: {
-              'Authorization': `Token ${'8f00fa816b1e3b485baca8f44ae5d361ef803311'}`,
+              'Authorization': `Token ${'bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec'}`,
               'Content-Type': 'application/json'
             },
             body: JSON.stringify(requestBody)
@@ -153,7 +153,8 @@ payNowButton.addEventListener('click', () => {
               if (responseData.status === 'success') {
                 alert('Data purchase successful');
               } else {
-                alert('Failed to purchase data');
+                // Display error from API response
+                alert(responseData.message || 'Failed to purchase data');
               }
             })
             .catch(error => {
@@ -171,9 +172,6 @@ payNowButton.addEventListener('click', () => {
       alert('Error validating pin. Please try again later.');
     });
 });
-
-
-
 
 
 
