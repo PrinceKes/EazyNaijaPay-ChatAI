@@ -92,6 +92,7 @@ payNowButton.addEventListener('click', () => {
         .then(response => response.json())
         .then(balanceData => {
           if (!balanceData.success) {
+            console.error('Error fetching balance:', balanceData);
             alert('Error fetching balance. Please try again later.');
             return;
           }
