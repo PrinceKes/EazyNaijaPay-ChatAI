@@ -126,11 +126,12 @@ payNowButton.addEventListener('click', () => {
 
           // 3. If pin and balance are valid, process the data purchase directly via Husmodata API
           const requestBody = {
-            network: selectedNetworkId,
+            network: networkSelect.options[networkSelect.selectedIndex].getAttribute('network_id'),
             mobile_number: phoneNumber,
             plan: selectedPlanId,
             Ported_number: true
           };
+          
 
           console.log('Sending data purchase request to Husmodata API...');
           console.log({
