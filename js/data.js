@@ -57,7 +57,9 @@ preferablePlanSelect.addEventListener('change', (e) => {
   }
 });
 
-// Proceed with the transaction
+
+
+
 payNowButton.addEventListener('click', () => {
   const selectedNetworkId = networkSelect.value;
   const selectedPlanId = preferablePlanSelect.value;
@@ -76,14 +78,10 @@ payNowButton.addEventListener('click', () => {
 
   // 1. Validate the pin with the API
   fetch(`https://eazynaijapay-server.onrender.com/Verified_Users/${userId}`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('User not found');
-      }
-      return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
-      if (data.success === false || data.user.User_pin !== pin) {
+      // Ensure that the pin is being compared correctly (trim any unwanted spaces)
+      if (data.success && data.user.User_pin.trim() !== pin.trim()) {
         alert('Invalid Pin');
         return;
       }
