@@ -57,7 +57,6 @@ preferablePlanSelect.addEventListener('change', (e) => {
   }
 });
 
-
 payNowButton.addEventListener('click', () => {
   const selectedNetworkId = networkSelect.value;
   const selectedPlanId = preferablePlanSelect.value;
@@ -108,6 +107,7 @@ payNowButton.addEventListener('click', () => {
           const userBalance = balanceData.balance;
           const selectedPlans = plans[selectedNetworkId];
           if (!selectedPlans) {
+            alert('No plans found for the selected network');
             return;
           }
 
@@ -124,7 +124,7 @@ payNowButton.addEventListener('click', () => {
             return;
           }
 
-          // 3. If pin and balance are valid, process the data purchase via proxy server
+          // 3. If pin and balance are valid, process the data purchase directly via Husmodata API
           const requestBody = {
             network: selectedNetworkId,
             mobile_number: phoneNumber,
@@ -132,17 +132,18 @@ payNowButton.addEventListener('click', () => {
             Ported_number: true
           };
 
-          console.log('Sending data purchase request to proxy server...');
+          console.log('Sending data purchase request to Husmodata API...');
           console.log({
-            Authorization: `Token ${'bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec'}`,
+            Authorization: `Token ${'8f00fa816b1e3b485baca8f44ae5d361ef803311'}`,
             ContentType: 'application/json',
             Body: requestBody
           });
 
-          // Send request to the proxy server
-          fetch('http://localhost:5000/proxy/topup', {
+          // Send request directly to the Husmodata API
+          fetch('https://www.husmodata.com/api/data/', {
             method: 'POST',
             headers: {
+              'Authorization': `Token ${'8f00fa816b1e3b485baca8f44ae5d361ef803311'}`,
               'Content-Type': 'application/json'
             },
             body: JSON.stringify(requestBody)
@@ -170,7 +171,6 @@ payNowButton.addEventListener('click', () => {
       alert('Error validating pin. Please try again later.');
     });
 });
-
 
 
 
