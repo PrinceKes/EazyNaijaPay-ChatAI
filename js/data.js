@@ -1,39 +1,186 @@
-// import plans from './plans.js'; // Import plans from plans.js
+import plans from './plans.js';
 
-// // Function to handle network selection
+const networkSelect = document.getElementById('network-select');
+const preferablePlanSelect = document.getElementById('preferable-plan');
+const amountToPay = document.getElementById('amount-to-pay');
+const payNowButton = document.getElementById('paynow');
+
+let userId = localStorage.getItem('user_id'); // Fetch user_id from local storage
+
+// Get plans based on selected network
+networkSelect.addEventListener('change', () => {
+  const selectedNetworkId = networkSelect.value;
+  
+  preferablePlanSelect.innerHTML = '<option value="" disabled selected>Choose your desired plan</option>';
+  
+  let selectedPlans = [];
+  if (selectedNetworkId == '1') {
+    selectedPlans = plans.MTN;
+  } else if (selectedNetworkId == '2') {
+    selectedPlans = plans.GLO;
+  } else if (selectedNetworkId == '3') {
+    selectedPlans = plans["9MOBILE"];
+  } else if (selectedNetworkId == '4') {
+    selectedPlans = plans.AIRTEL;
+  }
+
+  selectedPlans.forEach(plan => {
+    const option = document.createElement('option');
+    option.value = plan.plan_id;
+    option.textContent = `${plan.type} - ${plan.size} (${plan.amount})`;
+    preferablePlanSelect.appendChild(option);
+  });
+});
+
+// Update the amount to pay based on the selected plan
+preferablePlanSelect.addEventListener('change', (e) => {
+  const selectedPlanId = e.target.value;
+  const selectedNetworkId = networkSelect.value;
+
+  let selectedPlan = null;
+  let selectedPlans = [];
+  
+  if (selectedNetworkId == '1') {
+    selectedPlans = plans.MTN;
+  } else if (selectedNetworkId == '2') {
+    selectedPlans = plans.GLO;
+  } else if (selectedNetworkId == '3') {
+    selectedPlans = plans["9MOBILE"];
+  } else if (selectedNetworkId == '4') {
+    selectedPlans = plans.AIRTEL;
+  }
+
+  selectedPlan = selectedPlans.find(plan => plan.plan_id == selectedPlanId);
+  
+  if (selectedPlan) {
+    amountToPay.value = selectedPlan.amount.replace("₦", "");
+  }
+});
+
+// Proceed with the transaction
+payNowButton.addEventListener('click', () => {
+  const selectedNetworkId = networkSelect.value;
+  const selectedPlanId = preferablePlanSelect.value;
+  const phoneNumber = document.getElementById('phone-number').value;
+  const pin = `${document.getElementById('pin1').value}${document.getElementById('pin2').value}${document.getElementById('pin3').value}${document.getElementById('pin4').value}`;
+
+  if (!selectedNetworkId || !selectedPlanId || !phoneNumber || !pin) {
+    alert('Please complete all the fields and select a plan');
+    return;
+  }
+
+  if (pin.length !== 4) {
+    alert('Pin must be a 4-digit number.');
+    return;
+  }
+
+  // 1. Validate the pin with the API
+  fetch(`https://eazynaijapay-server.onrender.com/Verified_Users/${userId}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.User_pin !== pin) {
+        alert('Invalid Pin');
+        return;
+      }
+
+      // 2. Validate the balance
+      fetch(`https://eazynaijapay-server.onrender.com/Verified_Users/${userId}/Balance`)
+        .then(response => response.json())
+        .then(balanceData => {
+          const userBalance = balanceData.balance;
+          const selectedPlan = plans[selectedNetworkId].find(plan => plan.plan_id == selectedPlanId);
+          const amount = parseFloat(selectedPlan.amount.replace('₦', '').trim());
+
+          if (userBalance < amount) {
+            alert('Insufficient balance');
+            return;
+          }
+
+          // 3. If pin and balance are valid, process the data purchase
+          const requestBody = {
+            network: selectedNetworkId,
+            mobile_number: phoneNumber,
+            plan: selectedPlanId,
+            Ported_number: true
+          };
+
+          console.log('Sending data purchase request...');
+          console.log({
+            Authorization: `Token ${'bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec'}`,
+            ContentType: 'application/json',
+            Body: requestBody
+          });
+
+          fetch('https://www.husmodata.com/api/data/', {
+            method: 'POST',
+            headers: {
+              'Authorization': 'Token bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+          })
+            .then(response => response.json())
+            .then(responseData => {
+              if (responseData.status === 'success') {
+                alert('Data purchase successful');
+              } else {
+                alert('Failed to purchase data');
+              }
+            })
+            .catch(error => {
+              console.error('Error processing data purchase:', error);
+              alert('Error occurred. Please try again later.');
+            });
+
+        })
+        .catch(error => {
+          console.error('Error fetching balance:', error);
+          alert('Error fetching balance. Please try again later.');
+        });
+    })
+    .catch(error => {
+      console.error('Error validating pin:', error);
+      alert('Error validating pin. Please try again later.');
+    });
+});
+
+
+
+
+
+
+
+
+// import plans from './plans.js';
+
 // const networkSelect = document.getElementById('network-select');
 // const preferablePlanSelect = document.getElementById('preferable-plan');
 // const amountToPay = document.getElementById('amount-to-pay');
 
 // networkSelect.addEventListener('change', () => {
-//   // Get selected network ID
 //   const selectedNetworkId = networkSelect.value;
   
-//   // Clear any existing plans in the dropdown
 //   preferablePlanSelect.innerHTML = '<option value="" disabled selected>Choose your desired plan</option>';
   
-//   // Fetch the corresponding plans based on network ID
 //   let selectedPlans = [];
 //   if (selectedNetworkId == '1') {
-//     selectedPlans = plans.MTN; // Fetch MTN plans
+//     selectedPlans = plans.MTN;
 //   } else if (selectedNetworkId == '2') {
-//     selectedPlans = plans.GLO; // Fetch GLO plans
+//     selectedPlans = plans.GLO;
 //   } else if (selectedNetworkId == '3') {
-//     selectedPlans = plans["9MOBILE"]; // Fetch 9MOBILE plans
+//     selectedPlans = plans["9MOBILE"];
 //   } else if (selectedNetworkId == '4') {
-//     selectedPlans = plans.AIRTEL; // Fetch AIRTEL plans
+//     selectedPlans = plans.AIRTEL;
 //   }
 
-//   // Dynamically populate the preferable plan dropdown
 //   selectedPlans.forEach(plan => {
 //     const option = document.createElement('option');
-//     option.value = plan.plan_id;  // Plan ID is stored but hidden from user
-//     option.textContent = `${plan.type} - ${plan.size} (${plan.amount})`; // Display plan details to user
+//     option.value = plan.plan_id;
+//     option.textContent = `${plan.type} - ${plan.size} (${plan.amount})`;
 //     preferablePlanSelect.appendChild(option);
 //   });
 // });
 
-// // Display the selected plan's amount when a plan is chosen
 // preferablePlanSelect.addEventListener('change', (e) => {
 //   const selectedPlanId = e.target.value;
 //   const selectedNetworkId = networkSelect.value;
@@ -51,16 +198,13 @@
 //     selectedPlans = plans.AIRTEL;
 //   }
 
-//   // Find the selected plan by ID
 //   selectedPlan = selectedPlans.find(plan => plan.plan_id == selectedPlanId);
   
-//   // Display the amount to pay for the selected plan
 //   if (selectedPlan) {
-//     amountToPay.value = selectedPlan.amount.replace("₦", ""); // Remove the currency symbol for the amount input
+//     amountToPay.value = selectedPlan.amount.replace("₦", "");
 //   }
 // });
 
-// // Pay Now Button functionality (you can add this if needed)
 // const payNowButton = document.getElementById('paynow');
 // payNowButton.addEventListener('click', () => {
 //   const selectedNetworkId = networkSelect.value;
@@ -68,135 +212,16 @@
 //   const phoneNumber = document.getElementById('phone-number').value;
 //   const pin = `${document.getElementById('pin1').value}${document.getElementById('pin2').value}${document.getElementById('pin3').value}${document.getElementById('pin4').value}`;
 
-//   // Validate user input before proceeding with the transaction
 //   if (!selectedNetworkId || !selectedPlanId || !phoneNumber || !pin) {
 //     alert('Please complete all the fields and select a plan');
 //     return;
 //   }
 
-//   // Validate pin length or any other logic you may have
 //   if (pin.length !== 4) {
 //     alert('Pin must be a 4-digit number.');
 //     return;
 //   }
 
-//   // Proceed with the transaction logic here (API call or other operations)
 //   console.log('Transaction Proceeding...');
-//   // You can replace the above log with actual API call logic to process the payment
 // });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import plans from './plans.js'; // Import the plans data
-
-// Function to update the plans dropdown based on selected network
-const updatePlansDropdown = (networkId) => {
-    const planDropdown = document.getElementById('preferable-plan');
-    planDropdown.innerHTML = '<option value="" disabled selected>Choose your desired plan</option>'; // Clear previous options
-
-    // Select the plans based on networkId
-    let selectedPlans = [];
-    switch (networkId) {
-        case "1": // MTN
-            selectedPlans = plans.MTN;
-            break;
-        case "2": // GLO
-            selectedPlans = plans.GLO;
-            break;
-        case "3": // 9MOBILE
-            selectedPlans = plans["9MOBILE"];
-            break;
-        case "4": // AIRTEL
-            selectedPlans = plans.AIRTEL;
-            break;
-        default:
-            return; // If no valid network is selected, do nothing
-    }
-
-    // Populate the plan dropdown with available plans
-    selectedPlans.forEach((plan) => {
-        const option = document.createElement('option');
-        option.value = plan.plan_id;
-        option.textContent = `${plan.type} - ${plan.amount} - ${plan.size} (${plan.validity})`;
-        planDropdown.appendChild(option);
-    });
-};
-
-// Event listener for network selection
-document.getElementById('network-select').addEventListener('change', (event) => {
-    const selectedNetworkId = event.target.value;
-    updatePlansDropdown(selectedNetworkId); // Update the plans based on selected network
-});
-
-// Function to fetch the selected plan details
-const getSelectedPlanDetails = () => {
-    const planId = document.getElementById('preferable-plan').value;
-    let selectedPlanDetails = null;
-
-    // Loop through the plans to find the selected plan by plan_id
-    Object.keys(plans).forEach((networkKey) => {
-        const networkPlans = plans[networkKey];
-        networkPlans.forEach((plan) => {
-            if (plan.plan_id === parseInt(planId)) {
-                selectedPlanDetails = plan;
-            }
-        });
-    });
-
-    return selectedPlanDetails;
-};
-
-// Add event listener for the "Continue to Pay" button to verify pin and make the purchase
-document.getElementById('paynow').addEventListener('click', () => {
-    const pin1 = document.getElementById('pin1').value;
-    const pin2 = document.getElementById('pin2').value;
-    const pin3 = document.getElementById('pin3').value;
-    const pin4 = document.getElementById('pin4').value;
-
-    const enteredPin = pin1 + pin2 + pin3 + pin4;
-
-    // Verify pin (you can add a function to check if enteredPin matches the stored pin)
-    if (isPinValid(enteredPin)) {
-        const selectedPlan = getSelectedPlanDetails();
-
-        if (selectedPlan) {
-            // Display the selected plan details (or proceed with the payment process)
-            alert(`You have selected the plan: ${selectedPlan.type} - ${selectedPlan.amount} - ${selectedPlan.size} (${selectedPlan.validity})`);
-            // Here, you can integrate the logic for making a data purchase using the selected plan
-        } else {
-            alert("Please select a valid data plan.");
-        }
-    } else {
-        alert("Invalid PIN. Please try again.");
-    }
-});
-
-// Function to simulate pin verification
-const isPinValid = (enteredPin) => {
-    // Implement the actual pin verification logic here (e.g., check against the stored pin)
-    const storedPin = "1234"; // Placeholder for the stored pin
-    return enteredPin === storedPin;
-};
