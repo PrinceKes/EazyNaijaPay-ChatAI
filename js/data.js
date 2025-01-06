@@ -7,22 +7,23 @@ const payNowButton = document.getElementById('paynow');
 
 let userId = localStorage.getItem('user_id'); // Fetch user_id from local storage
 
+// Helper function to get plans for a selected network
+const getPlansByNetworkId = (networkId) => {
+  switch (networkId) {
+    case '1': return plans.MTN;
+    case '2': return plans.GLO;
+    case '3': return plans["9MOBILE"];
+    case '4': return plans.AIRTEL;
+    default: return [];
+  }
+};
+
 // Get plans based on selected network
 networkSelect.addEventListener('change', () => {
   const selectedNetworkId = networkSelect.value;
-
   preferablePlanSelect.innerHTML = '<option value="" disabled selected>Choose your desired plan</option>';
 
-  let selectedPlans = [];
-  if (selectedNetworkId == '1') {
-    selectedPlans = plans.MTN;
-  } else if (selectedNetworkId == '2') {
-    selectedPlans = plans.GLO;
-  } else if (selectedNetworkId == '3') {
-    selectedPlans = plans["9MOBILE"];
-  } else if (selectedNetworkId == '4') {
-    selectedPlans = plans.AIRTEL;
-  }
+  const selectedPlans = getPlansByNetworkId(selectedNetworkId);
 
   selectedPlans.forEach(plan => {
     const option = document.createElement('option');
@@ -37,20 +38,8 @@ preferablePlanSelect.addEventListener('change', (e) => {
   const selectedPlanId = e.target.value;
   const selectedNetworkId = networkSelect.value;
 
-  let selectedPlan = null;
-  let selectedPlans = [];
-
-  if (selectedNetworkId == '1') {
-    selectedPlans = plans.MTN;
-  } else if (selectedNetworkId == '2') {
-    selectedPlans = plans.GLO;
-  } else if (selectedNetworkId == '3') {
-    selectedPlans = plans["9MOBILE"];
-  } else if (selectedNetworkId == '4') {
-    selectedPlans = plans.AIRTEL;
-  }
-
-  selectedPlan = selectedPlans.find(plan => plan.plan_id == selectedPlanId);
+  const selectedPlans = getPlansByNetworkId(selectedNetworkId);
+  const selectedPlan = selectedPlans.find(plan => plan.plan_id == selectedPlanId);
 
   if (selectedPlan) {
     amountToPay.value = selectedPlan.amount.replace("₦", "");
@@ -105,14 +94,9 @@ payNowButton.addEventListener('click', () => {
           }
 
           const userBalance = balanceData.balance;
-          const selectedPlans = plans[selectedNetworkId];
-          if (!selectedPlans) {
-            console.log(plans);
-            alert('No plans found for the selected network');
-            return;
-          }
-
+          const selectedPlans = getPlansByNetworkId(selectedNetworkId);
           const selectedPlan = selectedPlans.find(plan => plan.plan_id == selectedPlanId);
+
           if (!selectedPlan) {
             alert('Selected plan not found.');
             return;
@@ -127,26 +111,20 @@ payNowButton.addEventListener('click', () => {
 
           // 3. If pin and balance are valid, process the data purchase directly via Husmodata API
           const requestBody = {
-            network: networkSelect.options[networkSelect.selectedIndex].getAttribute('network_id'),
+            network: selectedNetworkId, // Ensure the correct network_id is sent
             mobile_number: phoneNumber,
             plan: selectedPlanId,
             Ported_number: true
-          };          
+          };
 
+          // Log the payload for debugging
           console.log('Payload:', requestBody);
-
-          console.log('Sending data purchase request to Husmodata API...');
-          console.log({
-            Authorization: `Token ${'bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec'}`,
-            ContentType: 'application/json',
-            Body: requestBody
-          });
 
           // Send request directly to the Husmodata API
           fetch('https://www.husmodata.com/api/data/', {
             method: 'POST',
             headers: {
-              'Authorization': `Token ${'bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec'}`,
+              'Authorization': `Token bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec`,
               'Content-Type': 'application/json'
             },
             body: JSON.stringify(requestBody)
@@ -156,7 +134,6 @@ payNowButton.addEventListener('click', () => {
               if (responseData.status === 'success') {
                 alert('Data purchase successful');
               } else {
-                // Display error from API response
                 alert(responseData.message || 'Failed to purchase data');
               }
             })
@@ -175,11 +152,6 @@ payNowButton.addEventListener('click', () => {
       alert('Error validating pin. Please try again later.');
     });
 });
-
-
-
-
-
 
 
 
