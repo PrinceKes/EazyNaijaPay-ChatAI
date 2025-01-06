@@ -15,7 +15,7 @@ const plans = {
     { plan_id: 336, type: "GIFTING", amount: "₦289.0", size: "750.0 MB", validity: "1 month" },
     { plan_id: 345, type: "GIFTING", amount: "₦28800.0", size: "200.0 GB", validity: "1 month" },
     { plan_id: 350, type: "GIFTING", amount: "₦72000.0", size: "600.0 GB", validity: "1 month" },
-    // Add more MTN plans here
+    // Add more MTN plans her
   ],
   GLO: [
     { plan_id: 27, type: "GIFTING", amount: "₦3240.0", size: "18.0 GB", validity: "1 month" },
