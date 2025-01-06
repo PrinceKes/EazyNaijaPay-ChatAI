@@ -1,7 +1,7 @@
 // Constants
 const API_BASE_URL = "https://eazynaijapay-server.onrender.com/Verified_Users";
 const AIRTIME_API_URL = "http://localhost:5000/proxy/topup";
-const AUTH_TOKEN = "bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec";
+const AUTH_TOKEN = "1b4b2afd4ef0f22d082ebaf6c327de30ea1b6bcf";
 
 // Mapping of numeric string network IDs to network names (for reference if needed)
 const networkMap = {
