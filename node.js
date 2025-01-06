@@ -8,12 +8,10 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-const API_URL = "https://www.husmodata.com/api/data/";
-const AUTH_TOKEN = "bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec";
+const API_URL = "https://www.husmodata.com/api/topup/";
+const AUTH_TOKEN = "1b4b2afd4ef0f22d082ebaf6c327de30ea1b6bcf";
 
 app.post("/proxy/topup", async (req, res) => {
-    console.log("Incoming Request to Proxy:", req.body);  // Log the incoming request body
-
     try {
         const response = await fetch(API_URL, {
             method: "POST",
@@ -25,7 +23,7 @@ app.post("/proxy/topup", async (req, res) => {
         });
 
         const data = await response.json();
-        console.log("Husmodata API Response:", data); // Log the response from the API
+        console.log("Husmodata API Response:", data); // Log API response
         res.status(response.status).json(data);
     } catch (error) {
         console.error("Error in proxy:", error);
@@ -34,12 +32,12 @@ app.post("/proxy/topup", async (req, res) => {
 });
 
 
-
-
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+
+
 
 
 
@@ -58,10 +56,12 @@ app.listen(PORT, () => {
 // app.use(cors());
 // app.use(bodyParser.json());
 
-// const API_URL = "https://www.husmodata.com/api/topup/";
+// const API_URL = "https://www.husmodata.com/api/data/";
 // const AUTH_TOKEN = "bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec";
 
 // app.post("/proxy/topup", async (req, res) => {
+//     console.log("Incoming Request to Proxy:", req.body);  // Log the incoming request body
+
 //     try {
 //         const response = await fetch(API_URL, {
 //             method: "POST",
@@ -73,13 +73,15 @@ app.listen(PORT, () => {
 //         });
 
 //         const data = await response.json();
-//         console.log("Husmodata API Response:", data); // Log API response
+//         console.log("Husmodata API Response:", data); // Log the response from the API
 //         res.status(response.status).json(data);
 //     } catch (error) {
 //         console.error("Error in proxy:", error);
 //         res.status(500).json({ error: "Failed to fetch data from API." });
 //     }
 // });
+
+
 
 
 // const PORT = process.env.PORT || 5000;
