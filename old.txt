@@ -1,51 +1,97 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register as a New User</title>
-  <link rel="stylesheet" href="./css/index-style.css">
-</head>
-<body>
+Than kyou about bring my understanding to it but i think i am the one missing things up the endpoint is a wrong endpoint for buying the data plan, so this endpoint: "https://www.husmodata.com/api/topup/" is for topup of airtime from the api and the one that is required for the data purchase is this: "https://www.husmodata.com/api/data/" so now i want you to help me to look at this documentation and use it to write addictional function to use the new endpoint in my node.js file which will be working with the data.js file without touching the original one that handles the "api/topup".
 
-  <div class="background">
+here is API DOCUMENTATION for buy data using the correct endpoint:
 
-    <div class="register-container">
+AUTHORIZATION
+Bearer Token
+Token
+<token>
 
-      <div class="logo">
-        <img src="assets/logo.png" alt="Logo"> 
-      </div>
+POST
+Buy Data
+https://www.husmodata.com/api/data/
+Buy Data Endpoint
 
-      <h2>Sign In To Your Account</h2>
-      <p class="signin-text">Are you a new user? <a href="t.me/EazyNaijaPayBot">SignUp</a></p>
+make a post request to this endpoint with your authorization header and body
 
-        <form id="login">
+AUTHORIZATION
+API Key
+Key
+Authorization
 
-            <label for="email"> Enter Email</label>
-            <input type="email" id="email" class="input" placeholder="John@gmail.com" required>
+Value
+<value>
 
-            <form id="pin">
-                <div class="pin-inputs">
-                    <input type="text" maxlength="1" class="pin-input" oninput="moveToNext(this, 'pin2')" id="pin1">
-                    <input type="text" maxlength="1" class="pin-input" id="pin2" oninput="moveToNext(this, 'pin3')">
-                    <input type="text" maxlength="1" class="pin-input" id="pin3" oninput="moveToNext(this, 'pin4')">
-                    <input type="text" maxlength="1" class="pin-input" id="pin4">
-                </div>
-            </form>
-            
-            <button type="submit" class="continue-btn">Login</button>        
-        </form>
-    </div>
-  </div>
-  <!-- script for making pin interactive -->
-  <script>
-    function moveToNext(current, nextID) {
-        if (current.value.length >= 1) {
-            document.getElementById(nextID).focus();
-        }
+HEADERS
+Authorization
+Token 8f00fa816b1e3b485baca8f44ae5d361ef803311
+
+Content-Type
+application/json
+
+Body
+raw (json)
+json
+{
+    "network": network_id,
+    "mobile_number": "09037346247",
+    "plan": plan_id, 
+    "Ported_number": true
+}
+Example Request
+Buy Data
+curl
+curl --location 'https://www.husmodata.com/api/data/' \
+--header 'Authorization: Token 8f00fa816b1e3b485baca8f44ae5d361ef803311' \
+--header 'Content-Type: application/json' \
+--data '{
+    "network": network_id,
+    "mobile_number": "09037346247",
+    "plan": plan_id, 
+    "Ported_number": true
+}'
+
+
+here is my present node.js code to add the new endpoint to:
+
+const express = require("express");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const fetch = require("node-fetch");
+
+const app = express();
+
+app.use(cors());
+app.use(bodyParser.json());
+
+const API_URL = "https://www.husmodata.com/api/topup/";
+const AUTH_TOKEN = "1b4b2afd4ef0f22d082ebaf6c327de30ea1b6bcf";
+
+app.post("/proxy/topup", async (req, res) => {
+    try {
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Authorization": `Token ${AUTH_TOKEN}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(req.body),
+        });
+
+        const data = await response.json();
+        console.log("Husmodata API Response:", data); // Log API response
+        res.status(response.status).json(data);
+    } catch (error) {
+        console.error("Error in proxy:", error);
+        res.status(500).json({ error: "Failed to fetch data from API." });
     }
-</script>
-  <script src="./js/login.js"></script>
-  <script src="./js/loader.js"></script>
-</body>
-</html>
+});
+
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
+
+
+So now do the work quickly
