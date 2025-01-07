@@ -22,7 +22,7 @@
       <!-- Network Dropdown -->
       <div class="up-input-group">
         <label class="dropdown-label">
-          <img alt="Network Icon" id="selected-icon" class="network-icon">
+          <img src="../assets/select.png" alt="Network Icon" id="selected-icon" class="network-icon">
           <select id="network-select" class="dropdown">
             <option value="" disabled selected>Select a Network</option>
             <option value="1" network_id="1" data-icon="../assets/mtn.png">MTN</option>
@@ -100,6 +100,21 @@
       function setAmount(amount) {
         document.getElementById('amount').value = `₦ ${amount}`;
       }
+
+
+      // Add an event listener to the dropdown
+      networkSelect.addEventListener('change', function () {
+        // Get the selected option
+        const selectedOption = networkSelect.options[networkSelect.selectedIndex];
+
+        // Get the data-icon attribute of the selected option
+        const newIcon = selectedOption.getAttribute('data-icon');
+
+        // Update the src of the image
+        if (newIcon) {
+          selectedIcon.src = newIcon;
+        }
+      });
     </script>
 
     <!-- JavaScript for selecting amount -->

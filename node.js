@@ -150,3 +150,20 @@ app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
 
+
+
+
+
+
+
+
+
+// {
+//     "User_id": "1446675700"
+//     "Transaction_Type": "Top-Up"
+//     "Amount": 100
+//     "mobile_number": "08072975168"
+//     "Status": "successful"
+//     "Reference": "Airtime10c36dcedd-24c"
+//     "CreatedAt": "2025-01-07T03:19:01.473Z"
+// }
