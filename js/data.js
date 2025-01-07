@@ -112,7 +112,7 @@ payNowButton.addEventListener('click', () => {
           console.log('Payload:', requestBody);
 
           // Use the proxy URL
-          fetch('http://localhost:5000/proxy/topup', {
+          fetch('https://eazynaijapay-server.onrender.com/proxy/topup', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
