@@ -339,7 +339,32 @@ app.get('/Verified_Users', async (req, res) => {
 
 
 
-// Save a new transaction for a user
+// Get all user transactions for a specific User_id
+app.get('/Verified_Users/transactions/:User_id', async (req, res) => {
+  const { User_id } = req.params;
+
+  if (isNaN(User_id)) {
+    return res.status(400).json({ success: false, message: "Invalid User ID format." });
+  }
+  
+  try {
+    const user = await VerifiedUsers.findOne({ User_id });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found." });
+    }
+
+    res.status(200).json({
+      success: true,
+      transactions: user.Transactions,
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch transactions.", error: error.message });
+  }
+});
+
+// Save a transaction for a user
 app.post('/Verified_Users/save-transaction', async (req, res) => {
   const { User_id, amount, type, description } = req.body;
 
@@ -358,44 +383,27 @@ app.post('/Verified_Users/save-transaction', async (req, res) => {
       date: new Date(),
     };
 
-    // Add transaction to user's Transactions array
+    // Add transaction to the user's Transactions array
     user.Transactions.push(newTransaction);
 
-    // Update user balance if necessary (optional)
-    if (type === "credit") {
+    // Optionally update balance
+    if (type === 'credit') {
       user.Balance += amount;
-    } else if (type === "debit") {
+    } else if (type === 'debit') {
       user.Balance -= amount;
     }
 
     // Save updated user document
     await user.save();
 
-    res.status(200).json({ success: true, message: "Transaction saved successfully.", transaction: newTransaction });
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ success: false, message: "Failed to save transaction." });
-  }
-});
-
-// Get transactions for a specific user
-app.get('/Verified_Users/transactions/:User_id', async (req, res) => {
-  const { User_id } = req.params;
-
-  try {
-    const user = await VerifiedUsers.findOne({ User_id });
-
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User not found." });
-    }
-
-    res.status(200).json({ 
-      success: true, 
-      transactions: user.Transactions 
+    res.status(200).json({
+      success: true,
+      message: "Transaction saved successfully.",
+      transaction: newTransaction,
     });
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({ success: false, message: "Failed to fetch transactions." });
+    res.status(500).json({ success: false, message: "Failed to save transaction.", error: error.message });
   }
 });
 
