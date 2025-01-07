@@ -366,35 +366,6 @@ app.put('/Verified_Users/:User_id/Balance', async (req, res) => {
   }
 });
 
-// // Route to save transaction
-// app.post('/Verified_Users/:User_id/transactions', async (req, res) => {
-//   const { User_id } = req.params;
-//   const { Transaction_Type, Amount, mobile_number, Status, Reference } = req.body;
-
-//   try {
-//       const transaction = new Transaction({
-//           User_id,
-//           Transaction_Type,
-//           Amount,
-//           mobile_number,
-//           Status,
-//           Reference,
-//       });
-
-//       await transaction.save();
-
-//       await VerifiedUsers.findOneAndUpdate(
-//           { User_id },
-//           { $push: { Transactions: transaction._id } }
-//       );
-
-//       res.status(200).json({ success: true, message: "Transaction saved successfully." });
-//   } catch (error) {
-//       console.error("Error saving transaction:", error);
-//       res.status(500).json({ success: false, message: "Failed to save transaction." });
-//   }
-// });
-
 app.post('/Verified_Users/:User_id/transactions', async (req, res) => {
   const { User_id } = req.params;
   const { Transaction_Type, Amount, mobile_number, Status, Reference } = req.body;
@@ -411,15 +382,24 @@ app.post('/Verified_Users/:User_id/transactions', async (req, res) => {
       });
 
       console.log("Saving transaction...");
-      await transaction.save();
+      const savedTransaction = await transaction.save();
 
-      console.log("Updating VerifiedUser...");
-      await VerifiedUsers.findOneAndUpdate(
-          { User_id },
-          { $push: { Transactions: transaction._id } }
+      console.log("Updating VerifiedUsers...");
+      const updatedUser = await VerifiedUsers.findOneAndUpdate(
+          { User_id }, // Match User_id in VerifiedUsers
+          { $push: { Transactions: savedTransaction._id } }, // Push transaction ObjectId
+          { new: true } // Return the updated document
       );
 
-      res.status(200).json({ success: true, message: "Transaction saved successfully." });
+      if (!updatedUser) {
+          return res.status(404).json({ success: false, message: "User not found." });
+      }
+
+      res.status(200).json({ 
+          success: true, 
+          message: "Transaction saved and linked successfully.", 
+          transaction: savedTransaction 
+      });
   } catch (error) {
       console.error("Error:", error);
       res.status(500).json({ success: false, message: "Failed to save transaction." });
@@ -439,12 +419,16 @@ app.get('/Verified_Users/:User_id/transactions', async (req, res) => {
           return res.status(404).json({ success: false, message: "User not found." });
       }
 
-      res.status(200).json({ success: true, transactions: user.Transactions });
+      res.status(200).json({ 
+          success: true, 
+          transactions: user.Transactions 
+      });
   } catch (error) {
       console.error("Error:", error);
       res.status(500).json({ success: false, message: "Failed to fetch transactions." });
   }
 });
+
 
 
 
