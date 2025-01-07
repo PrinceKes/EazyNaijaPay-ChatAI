@@ -292,6 +292,112 @@ app.post('/webhook/flutterwave', async (req, res) => {
 
 
 
+// making do with the api of husmodata to log response to the api to the transaction
+// Function to log transactions into the Transactions schema
+const logTransaction = async (transactionData) => {
+  try {
+    const {
+      id,
+      ident,
+      airtime_type,
+      network,
+      paid_amount,
+      mobile_number,
+      amount,
+      Status,
+      create_date,
+      customer_ref
+    } = transactionData;
+
+    // Create a new transaction record
+    const newTransaction = new Transaction({
+      User_id: transactionData.User_id, // Make sure User_id is included in the transactionData
+      Transaction_Type: airtime_type,
+      Amount: amount,
+      Status,
+      Reference: ident || customer_ref,
+      CreatedAt: create_date,
+    });
+
+    await newTransaction.save();
+    console.log(`Transaction logged successfully for User_id: ${transactionData.User_id}`);
+  } catch (error) {
+    console.error("Error logging transaction:", error);
+  }
+};
+
+
+
+const updateUserBalance = async (User_id, amountToDeduct) => {
+  try {
+    const user = await VerifiedUser.findOne({ User_id: String(User_id) });
+
+    if (!user) {
+      console.log(`User with User_id ${User_id} not found.`);
+      return { success: false, message: "User not found" };
+    }
+
+    // Calculate new balance
+    const newBalance = user.Balance - amountToDeduct;
+
+    if (newBalance < 0) {
+      console.log(`Insufficient balance for User_id: ${User_id}`);
+      return { success: false, message: "Insufficient balance" };
+    }
+
+    // Update user's balance
+    user.Balance = newBalance;
+    await user.save();
+
+    console.log(`Balance updated successfully for User_id: ${User_id}. New Balance: ${newBalance}`);
+    return { success: true, newBalance };
+  } catch (error) {
+    console.error("Error updating balance:", error);
+    return { success: false, message: "Server error" };
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Start the server
 const PORT = process.env.PORT || 5000; // Use Render's assigned PORT or default to 3000
 app.listen(PORT, () => {
