@@ -138,3 +138,122 @@ function moveToNext(current, next) {
         document.getElementById(next)?.focus();
     }
 }
+
+
+
+// New updating
+// Function to handle and save airtime transactions
+async function handleAirtimeResponse(apiResponse) {
+    const transactionData = {
+        User_id: userId, // Retrieved from local storage
+        Transaction_Type: "Airtime Top-Up",
+        Amount: parseFloat(apiResponse.plan_amount), // Ensure it's a number
+        mobile_number: apiResponse.mobile_number,
+        Status: apiResponse.Status,
+        Reference: apiResponse.customer_ref,
+        CreatedAt: new Date(apiResponse.create_date),
+    };
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/${userId}/transactions`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Token ${AUTH_TOKEN}`,
+            },
+            body: JSON.stringify(transactionData),
+        });
+
+        if (!response.ok) throw new Error("Failed to save transaction to database.");
+        console.log("Transaction saved successfully.");
+    } catch (error) {
+        console.error("Error saving transaction:", error);
+    }
+}
+
+// Modify buyAirtime function to include transaction handling
+async function buyAirtime(networkId, amount, phone) {
+    try {
+        const response = await fetch(AIRTIME_API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Token ${AUTH_TOKEN}`,
+            },
+            body: JSON.stringify({
+                network: networkId,
+                amount: amount,
+                mobile_number: phone,
+                Ported_number: true,
+                airtime_type: "VTU",
+            }),
+        });
+
+        if (!response.ok) throw new Error("Failed to process airtime purchase.");
+
+        const apiResponse = await response.json();
+        console.log("Airtime Purchase Response:", apiResponse);
+
+        if (apiResponse.Status === "successful") {
+            alert("Airtime purchase successful!");
+            await handleAirtimeResponse(apiResponse); // Save transaction data
+        } else {
+            alert("Airtime purchase failed: " + apiResponse.Status);
+        }
+    } catch (error) {
+        console.error("Error processing airtime purchase:", error);
+        alert("Airtime purchase failed. Please try again.");
+    }
+}
+
+
+
+
+// Function to update user balance
+async function updateBalance(amount) {
+    try {
+        // Fetch current balance
+        const response = await fetch(`${API_BASE_URL}/${userId}`);
+        if (!response.ok) throw new Error("Failed to fetch user balance.");
+
+        const data = await response.json();
+        if (!data.success) throw new Error("Invalid user data.");
+
+        const newBalance = data.user.Balance - amount;
+
+        // Update balance on the server
+        const updateResponse = await fetch(`${API_BASE_URL}/${userId}/Balance`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Token ${AUTH_TOKEN}`,
+            },
+            body: JSON.stringify({ Balance: newBalance }),
+        });
+
+        if (!updateResponse.ok) throw new Error("Failed to update user balance.");
+
+        console.log("Balance updated successfully. New Balance:", newBalance);
+    } catch (error) {
+        console.error("Error updating balance:", error);
+    }
+}
+
+
+
+
+// function to validate Amount
+function validateAmount(input) {
+    const value = parseFloat(input.value.replace(/,/g, ''));
+    if (isNaN(value) || value <= 0) {
+        input.value = "0.00";
+    } else {
+        input.value = value.toFixed(2); // Format to 2 decimal places
+    }
+}
+
+
+// Call updateBalance after a successful transaction
+if (apiResponse.Status === "successful") {
+    await updateBalance(parseFloat(apiResponse.plan_amount));
+}

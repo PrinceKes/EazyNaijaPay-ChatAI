@@ -10,6 +10,8 @@ const fs = require('fs');
 const Transaction = require("./models/Transactions");
 const crypto = require('crypto');
 const fetch = require("node-fetch");
+const router = express.Router();
+const VerifiedUsers = require('./models/Verified_Users');
 
 const BOT_TOKEN = '8136531029:AAHlArThifhrPiOQuQv5HYi_gBpt7_XZFjA';
 
@@ -324,6 +326,87 @@ app.get('/Verified_Users', async (req, res) => {
   
   });
   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // Route to update user balance
+router.put('/Verified_Users/:userId/Balance', async (req, res) => {
+  const { userId } = req.params;
+  const { Balance } = req.body;
+
+  try {
+      const user = await VerifiedUsers.findOneAndUpdate(
+          { User_id: userId },
+          { Balance },
+          { new: true }
+      );
+
+      if (!user) return res.status(404).json({ success: false, message: "User not found." });
+
+      res.status(200).json({ success: true, message: "Balance updated successfully.", user });
+  } catch (error) {
+      console.error("Error updating balance:", error);
+      res.status(500).json({ success: false, message: "Failed to update balance." });
+  }
+});
+
+
+
+
+
+
+// Updating the transaction
+// Route to save transaction
+router.post('/Verified_Users/:userId/transactions', async (req, res) => {
+  const { userId } = req.params;
+  const { Transaction_Type, Amount, mobile_number, Status, Reference, CreatedAt } = req.body;
+
+  try {
+      // Create and save transaction
+      const transaction = new Transactions({
+          User_id: userId,
+          Transaction_Type,
+          Amount,
+          mobile_number,
+          Status,
+          Reference,
+          CreatedAt,
+      });
+
+      await transaction.save();
+
+      // Update user's transaction history
+      await VerifiedUsers.findOneAndUpdate(
+          { User_id: userId },
+          { $push: { Transactions: transaction._id } }
+      );
+
+      res.status(200).json({ success: true, message: "Transaction saved successfully." });
+  } catch (error) {
+      console.error("Error saving transaction:", error);
+      res.status(500).json({ success: false, message: "Failed to save transaction." });
+  }
+});
+
+module.exports = router;
 
 
 
