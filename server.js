@@ -348,8 +348,8 @@ app.get('/Verified_Users', async (req, res) => {
 
 
   // Route to update user balance
-router.put('/Verified_Users/:userId/Balance', async (req, res) => {
-  const { userId } = req.params;
+router.put('/Verified_Users/:User_id/Balance', async (req, res) => {
+  const { User_id } = req.params;
   const { Balance } = req.body;
 
   try {
@@ -375,8 +375,8 @@ router.put('/Verified_Users/:userId/Balance', async (req, res) => {
 
 // Updating the transaction
 // Route to save transaction
-router.post('/Verified_Users/:userId/transactions', async (req, res) => {
-  const { userId } = req.params;
+router.post('/Verified_Users/:User_id/transactions', async (req, res) => {
+  const { User_id } = req.params;
   const { Transaction_Type, Amount, mobile_number, Status, Reference, CreatedAt } = req.body;
 
   try {
