@@ -86,7 +86,7 @@
     </script>
 
     <!-- JavaScript -->
-    <script>
+    <!-- <script>
       // Handle Network Dropdown
       const dropdown = document.getElementById('network-dropdown');
       const selectedIcon = document.getElementById('selected-icon');
@@ -100,22 +100,7 @@
       function setAmount(amount) {
         document.getElementById('amount').value = `₦ ${amount}`;
       }
-
-
-      // Add an event listener to the dropdown
-      networkSelect.addEventListener('change', function () {
-        // Get the selected option
-        const selectedOption = networkSelect.options[networkSelect.selectedIndex];
-
-        // Get the data-icon attribute of the selected option
-        const newIcon = selectedOption.getAttribute('data-icon');
-
-        // Update the src of the image
-        if (newIcon) {
-          selectedIcon.src = newIcon;
-        }
-      });
-    </script>
+    </script> -->
 
     <!-- JavaScript for selecting amount -->
     <script>
@@ -136,6 +121,28 @@
         input.value = amount;
       }
     </script>
+
+<script>
+  // Handle Network Dropdown
+  const dropdown = document.getElementById('network-select'); // Corrected to match the HTML `id`
+  const selectedIcon = document.getElementById('selected-icon');
+  
+  dropdown.addEventListener('change', function () {
+    const selectedOption = dropdown.options[dropdown.selectedIndex]; // Get the selected option
+    const newIcon = selectedOption.getAttribute('data-icon'); // Retrieve the `data-icon` attribute
+
+    // Update the image source if a valid `data-icon` exists
+    if (newIcon) {
+      selectedIcon.src = newIcon;
+    }
+  });
+
+  // Set Airtime Amount
+  function setAmount(amount) {
+    document.getElementById('amount').value = `₦ ${amount}`;
+  }
+</script>
+
 
   </body>
 </html>
