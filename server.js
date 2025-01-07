@@ -366,14 +366,13 @@ app.put('/Verified_Users/:User_id/Balance', async (req, res) => {
   }
 });
 
-
 // Route to save transaction
 app.post('/Verified_Users/:User_id/transactions', async (req, res) => {
   const { User_id } = req.params;
   const { Transaction_Type, Amount, mobile_number, Status, Reference } = req.body;
 
   try {
-      const transaction = new Transactions({
+      const transaction = new Transaction({
           User_id,
           Transaction_Type,
           Amount,
@@ -395,6 +394,7 @@ app.post('/Verified_Users/:User_id/transactions', async (req, res) => {
       res.status(500).json({ success: false, message: "Failed to save transaction." });
   }
 });
+
 
 
 
