@@ -1,197 +1,204 @@
 // Constants
 const API_BASE_URL = "https://eazynaijapay-server.onrender.com/Verified_Users";
 const AIRTIME_API_URL = "https://eazynaijapay-server.onrender.com/proxy/topup";
+const DATA_API_URL = "https://eazynaijapay-server.onrender.com/proxy/data";
 const AUTH_TOKEN = "1b4b2afd4ef0f22d082ebaf6c327de30ea1b6bcf";
 
 // Mapping of numeric string network IDs to network names (for reference if needed)
 const networkMap = {
-  "1": "MTN",
-  "2": "GLO",
-  "3": "9MOBILE",
-  "4": "AIRTEL",
+    "1": "MTN",
+    "2": "GLO",
+    "3": "9MOBILE",
+    "4": "AIRTEL",
 };
 
-// Attach event listener to the "Continue to pay" button
-document.getElementById("paynow").addEventListener("click", async () => {
-  try {
-    // Retrieve User ID from local storage
-    const userId = localStorage.getItem("user_id") || localStorage.getItem("User_id");
+// Retrieve user_id from local storage
+const userId = localStorage.getItem("user_id") || localStorage.getItem("User_id");
+if (!userId) {
+    alert("User not authenticated. Please log in again.");
+    window.location.href = "/login.html"; // Redirect to login if no user_id
+}
 
-    if (!userId) {
-      alert("User ID is missing. Please log in again.");
-      window.location.href = "/login.html"; // Redirect to login if no user ID
-      return;
+// Function to validate PIN
+async function validatePin(pin) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/${userId}`);
+        if (!response.ok) throw new Error("Failed to validate PIN.");
+
+        const data = await response.json();
+        if (!data.success) throw new Error("Invalid user data.");
+
+        return data.user.User_pin === pin;
+    } catch (error) {
+        console.error("Error validating PIN:", error);
+        return false;
     }
+}
 
-    // Collect input values (example: replace with actual input fields on your form)
-    const networkId = document.getElementById("network").value;
-    const amount = document.getElementById("amount").value;
-    const phone = document.getElementById("phone").value;
-    const pin = document.getElementById("pin").value;
+// Function to check balance
+async function checkBalance(amount) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/${userId}`);
+        if (!response.ok) throw new Error("Failed to check balance.");
 
-    // Validate input fields
-    if (!networkId || !amount || !phone || !pin) {
-      alert("Please fill in all the fields.");
-      return;
+        const data = await response.json();
+        if (!data.success) throw new Error("Invalid user data.");
+
+        const currentBalance = data.user.Balance;
+        if (currentBalance < amount) {
+            alert("Insufficient balance. Please recharge your wallet.");
+            return false;
+        }
+
+        return true;
+    } catch (error) {
+        console.error("Error checking balance:", error);
+        return false;
     }
+}
 
-    // Call the buyAirtime function
-    await buyAirtime(networkId, amount, phone, pin, userId);
-  } catch (error) {
-    console.error("Error processing payment:", error);
-    alert("An error occurred. Please try again.");
-  }
-});
+// Function to update user balance
+async function updateBalance(amount) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/${userId}`);
+        if (!response.ok) throw new Error("Failed to fetch current balance.");
+
+        const data = await response.json();
+        if (!data.success) throw new Error("Failed to retrieve user data.");
+
+        const currentBalance = data.user.Balance;
+        const newBalance = currentBalance - amount;
+
+        const updateResponse = await fetch(`${API_BASE_URL}/${userId}/Balance`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                Balance: newBalance,
+            }),
+        });
+
+        if (!updateResponse.ok) throw new Error("Failed to update balance.");
+
+        const updateData = await updateResponse.json();
+        if (!updateData.success) throw new Error("Balance update failed.");
+
+        console.log("Balance updated successfully.");
+    } catch (error) {
+        console.error("Error updating balance:", error);
+    }
+}
+
+// Function to save airtime transaction
+async function saveAirtimeTransaction(networkId, amount, phone, transactionStatus) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/${userId}/transactions`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                User_id: userId, // Pass the User_id here
+                Transaction_Type: "Airtime",
+                Amount: amount,
+                mobile_number: phone,
+                Status: transactionStatus,
+                Reference: `AIRTIME${Date.now()}`, // Generate unique reference
+            }),
+        });
+
+        if (!response.ok) throw new Error("Failed to save transaction.");
+
+        const data = await response.json();
+        if (!data.success) throw new Error("Transaction saving failed.");
+
+        console.log("Transaction saved successfully.");
+    } catch (error) {
+        console.error("Error saving transaction:", error);
+    }
+}
 
 // Function to buy airtime
-async function buyAirtime(networkId, amount, phone, pin, userId) {
-  try {
-    // Validate PIN
-    const isPinValid = await validatePin(pin, userId);
-    if (!isPinValid) {
-      alert("Invalid PIN. Please try again.");
-      return;
+async function buyAirtime(networkId, amount, phone, pin) {
+    try {
+        // Validate PIN
+        const isPinValid = await validatePin(pin);
+        if (!isPinValid) {
+            alert("Invalid PIN. Please try again.");
+            return;
+        }
+
+        // Check balance
+        const isBalanceSufficient = await checkBalance(amount);
+        if (!isBalanceSufficient) {
+            return;
+        }
+
+        // Request to server for airtime purchase
+        const response = await fetch(AIRTIME_API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                User_id: userId, // Pass the User_id to the server
+                network: networkId,
+                amount: amount,
+                mobile_number: phone,
+                Ported_number: true,
+                airtime_type: "VTU",
+            }),
+        });
+
+        const data = await response.json();
+        if (data.Status === "successful") {
+            console.log("Airtime purchase successful:", data);
+            alert("Airtime purchase successful!");
+            await updateBalance(amount);
+            await saveAirtimeTransaction(networkId, amount, phone, "successful");
+        } else {
+            alert(`Airtime purchase failed: ${data.Message}`);
+            await saveAirtimeTransaction(networkId, amount, phone, "failed");
+        }
+    } catch (error) {
+        console.error("Error purchasing airtime:", error);
+        alert("An error occurred while purchasing airtime.");
     }
+}
 
-    // Check balance
-    const isBalanceSufficient = await checkBalance(amount, userId);
-    if (!isBalanceSufficient) {
-      return;
+// Add an event listener for the "Continue to pay" button
+document.getElementById("paynow").addEventListener("click", async function () {
+    try {
+        // Retrieve user_id from localStorage
+        const userId = localStorage.getItem("user_id") || localStorage.getItem("User_id");
+
+        if (!userId) {
+            alert("User ID is missing. Please log in again.");
+            window.location.href = "https://t.me/EazyNaijaPayBot"; // Redirect to login page
+            return;
+        }
+
+        // Collect form data
+        const networkId = document.getElementById("network-dropdown").value;
+        const phoneNumber = document.getElementById("phone-number").value.trim();
+        const amount = parseFloat(document.getElementById("amount").value);
+
+        // Validate inputs
+        if (!phoneNumber || isNaN(amount) || amount <= 0) {
+            alert("Please enter valid phone number and amount.");
+            return;
+        }
+
+        // Call buyAirtime function to process the purchase
+        const pin = document.getElementById("pin").value.trim(); // Ensure you have an input for pin
+        await buyAirtime(networkId, amount, phoneNumber, pin);
+
+    } catch (error) {
+        console.error("Error processing payment:", error);
+        alert("An error occurred while processing your request.");
     }
-
-    // Request to server for airtime purchase
-    const response = await fetch(AIRTIME_API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${AUTH_TOKEN}`,
-      },
-      body: JSON.stringify({
-        User_id: userId, // Pass the User_id to the server
-        network: networkId,
-        amount: amount,
-        mobile_number: phone,
-        Ported_number: true,
-        airtime_type: "VTU",
-      }),
-    });
-
-    const data = await response.json();
-    if (data.Status === "successful") {
-      console.log("Airtime purchase successful:", data);
-      alert("Airtime purchase successful!");
-      await updateBalance(amount, userId);
-      await saveAirtimeTransaction(networkId, amount, phone, "successful", userId);
-    } else {
-      alert(`Airtime purchase failed: ${data.Message}`);
-      await saveAirtimeTransaction(networkId, amount, phone, "failed", userId);
-    }
-  } catch (error) {
-    console.error("Error purchasing airtime:", error);
-    alert("An error occurred while purchasing airtime.");
-  }
-}
-
-// Updated functions to pass userId explicitly
-async function validatePin(pin, userId) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/${userId}`);
-    if (!response.ok) throw new Error("Failed to validate PIN.");
-
-    const data = await response.json();
-    if (!data.success) throw new Error("Invalid user data.");
-
-    return data.user.User_pin === pin;
-  } catch (error) {
-    console.error("Error validating PIN:", error);
-    return false;
-  }
-}
-
-async function checkBalance(amount, userId) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/${userId}`);
-    if (!response.ok) throw new Error("Failed to check balance.");
-
-    const data = await response.json();
-    if (!data.success) throw new Error("Invalid user data.");
-
-    const currentBalance = data.user.Balance;
-    if (currentBalance < amount) {
-      alert("Insufficient balance. Please recharge your wallet.");
-      return false;
-    }
-
-    return true;
-  } catch (error) {
-    console.error("Error checking balance:", error);
-    return false;
-  }
-}
-
-async function updateBalance(amount, userId) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/${userId}`);
-    if (!response.ok) throw new Error("Failed to fetch current balance.");
-
-    const data = await response.json();
-    if (!data.success) throw new Error("Failed to retrieve user data.");
-
-    const currentBalance = data.user.Balance;
-    const newBalance = currentBalance - amount;
-
-    const updateResponse = await fetch(`${API_BASE_URL}/${userId}/Balance`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        Balance: newBalance,
-      }),
-    });
-
-    if (!updateResponse.ok) throw new Error("Failed to update balance.");
-
-    const updateData = await updateResponse.json();
-    if (!updateData.success) throw new Error("Balance update failed.");
-
-    console.log("Balance updated successfully.");
-  } catch (error) {
-    console.error("Error updating balance:", error);
-  }
-}
-
-async function saveAirtimeTransaction(networkId, amount, phone, transactionStatus, userId) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/${userId}/transactions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        User_id: userId, // Pass the User_id here
-        Transaction_Type: "Airtime",
-        Amount: amount,
-        mobile_number: phone,
-        Status: transactionStatus,
-        Reference: `AIRTIME${Date.now()}`, // Generate unique reference
-      }),
-    });
-
-    if (!response.ok) throw new Error("Failed to save transaction.");
-
-    const data = await response.json();
-    if (!data.success) throw new Error("Transaction saving failed.");
-
-    console.log("Transaction saved successfully.");
-  } catch (error) {
-    console.error("Error saving transaction:", error);
-  }
-}
-
-
-
-
+});
 
 
 
@@ -595,4 +602,99 @@ async function saveAirtimeTransaction(networkId, amount, phone, transactionStatu
 
 //     // Buy airtime
 //     await buyAirtime(network, amount, phone);
+// });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// // Add an event listener for the "Continue to pay" button
+// document.getElementById("paynow").addEventListener("click", async function () {
+//     try {
+//         // Retrieve user_id from localStorage
+//         const userId = localStorage.getItem("user_id") || localStorage.getItem("User_id");
+
+//         if (!userId) {
+//             alert("User ID is missing. Please log in again.");
+//             window.location.href = "https://t.me/EazyNaijaPayBot"; // Redirect to login page
+//             return;
+//         }
+
+//         // Collect form data
+//         const networkId = document.getElementById("network-dropdown").value;
+//         const phoneNumber = document.getElementById("phone-number").value.trim();
+//         const amount = parseFloat(document.getElementById("amount").value);
+
+//         // Validate inputs
+//         if (!phoneNumber || isNaN(amount) || amount <= 0) {
+//             alert("Please enter valid phone number and amount.");
+//             return;
+//         }
+
+//         // Prepare the payload
+//         const payload = {
+//             User_id: userId, // Add user_id to the payload
+//             network: networkId,
+//             mobile_number: phoneNumber,
+//             amount: amount,
+//             Ported_number: true,
+//             airtime_type: "VTU",
+//         };
+
+//         console.log("Payload:", payload);
+
+//         // Send the payload to the server
+//         const response = await fetch(AIRTIME_API_URL, {
+//             method: "POST",
+//             headers: {
+//                 "Content-Type": "application/json",
+//             },
+//             body: JSON.stringify(payload),
+//         });
+
+//         const data = await response.json();
+
+//         if (response.ok && data.Status === "successful") {
+//             alert("Airtime purchase successful!");
+//             console.log("Success:", data);
+//         } else {
+//             alert(`Airtime purchase failed: ${data.Message || "Unknown error"}`);
+//             console.error("Error response:", data);
+//         }
+//     } catch (error) {
+//         console.error("Error processing payment:", error);
+//         alert("An error occurred while processing your request.");
+//     }
 // });
