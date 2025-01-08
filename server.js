@@ -8,6 +8,7 @@ const User = require('./models/loging');
 const axios = require('axios');
 const fs = require('fs');
 const Transaction = require("./models/Transactions");
+const Data = require('./models/Data');
 const VerifiedUsers = require('./models/Verified_Users');
 const crypto = require('crypto');
 const fetch = require("node-fetch");
@@ -53,9 +54,77 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// Adding the new Husmodata Proxy Routes
+// // Adding the new Husmodata Proxy Routes
+// // Airtime Top-Up Proxy
+// app.post("/proxy/topup", async (req, res) => {
+//   try {
+//     const response = await fetch(AIRTIME_API_URL, {
+//       method: "POST",
+//       headers: {
+//         "Authorization": `Token ${AUTH_TOKEN}`,
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify(req.body),
+//     });
+
+//     const data = await response.json();
+//     console.log("Husmodata API Response (Top-Up):", data);
+//     res.status(response.status).json(data);
+//   } catch (error) {
+//     console.error("Error in Top-Up Proxy:", error);
+//     res.status(500).json({ error: "Failed to fetch data from API." });
+//   }
+// });
+
+// // Data Purchase Proxy
+// app.post("/proxy/data", async (req, res) => {
+//   try {
+//     const response = await fetch(DATA_API_URL, {
+//       method: "POST",
+//       headers: {
+//         "Authorization": `Token ${AUTH_TOKEN}`,
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify(req.body),
+//     });
+
+//     const data = await response.json();
+//     console.log("Husmodata API Response (Data Purchase):", data);
+//     res.status(response.status).json(data);
+//   } catch (error) {
+//     console.error("Error in Data Purchase Proxy:", error);
+//     res.status(500).json({ error: "Failed to fetch data from API." });
+//   }
+// });
+
+
+
+
+
+// Save Transaction Function
+const saveTransaction = async (transactionData, userId) => {
+  try {
+    const { airtime_type, ...rest } = transactionData;
+
+    if (airtime_type) {
+      // Save to Transaction Schema (for Airtime Top-Up)
+      const transaction = new Transaction({ ...rest, User_id: userId });
+      await transaction.save();
+      console.log("Airtime transaction saved successfully:", transaction);
+    } else {
+      // Save to Data Schema (for Data Purchase)
+      const dataTransaction = new Data({ ...rest, User_id: userId });
+      await dataTransaction.save();
+      console.log("Data transaction saved successfully:", dataTransaction);
+    }
+  } catch (error) {
+    console.error("Error saving transaction:", error);
+  }
+};
+
 // Airtime Top-Up Proxy
 app.post("/proxy/topup", async (req, res) => {
+  const { User_id } = req.body; // Assume User_id is passed in the request body
   try {
     const response = await fetch(AIRTIME_API_URL, {
       method: "POST",
@@ -68,6 +137,11 @@ app.post("/proxy/topup", async (req, res) => {
 
     const data = await response.json();
     console.log("Husmodata API Response (Top-Up):", data);
+
+    if (data.Status === "successful") {
+      await saveTransaction(data, User_id);
+    }
+
     res.status(response.status).json(data);
   } catch (error) {
     console.error("Error in Top-Up Proxy:", error);
@@ -77,6 +151,7 @@ app.post("/proxy/topup", async (req, res) => {
 
 // Data Purchase Proxy
 app.post("/proxy/data", async (req, res) => {
+  const { User_id } = req.body; // Assume User_id is passed in the request body
   try {
     const response = await fetch(DATA_API_URL, {
       method: "POST",
@@ -89,12 +164,18 @@ app.post("/proxy/data", async (req, res) => {
 
     const data = await response.json();
     console.log("Husmodata API Response (Data Purchase):", data);
+
+    if (data.Status === "successful") {
+      await saveTransaction(data, User_id);
+    }
+
     res.status(response.status).json(data);
   } catch (error) {
     console.error("Error in Data Purchase Proxy:", error);
     res.status(500).json({ error: "Failed to fetch data from API." });
   }
 });
+
 
 
 
@@ -346,7 +427,7 @@ app.get('/Verified_Users/transactions/:User_id', async (req, res) => {
   if (isNaN(User_id)) {
     return res.status(400).json({ success: false, message: "Invalid User ID format." });
   }
-  
+
   try {
     const user = await VerifiedUsers.findOne({ User_id });
 

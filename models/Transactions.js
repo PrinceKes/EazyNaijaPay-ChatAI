@@ -18,9 +18,10 @@ const TransactionSchema = new mongoose.Schema({
   Ported_number: { type: Boolean, required: true },
   customer_ref: { type: String, required: false },
   api_response: { type: String, required: false },
-});
+}, { collection: 'Transactions' });
+// });
 
-module.exports = mongoose.model('Transaction', TransactionSchema);
+module.exports = mongoose.model('Transactions', TransactionSchema);
 
 
 
@@ -39,3 +40,7 @@ module.exports = mongoose.model('Transaction', TransactionSchema);
 // }, { collection: 'Transactions' });
 
 // module.exports = mongoose.model('Transactions', TransactionsSchema);
+
+
+
+
