@@ -122,6 +122,8 @@ async function saveAirtimeTransaction(networkId, amount, phone, transactionStatu
 // Function to buy airtime
 async function buyAirtime(networkId, amount, phone, pin) {
     try {
+        console.log("Attempting to buy airtime with the following details:", { networkId, amount, phone, pin });
+
         // Validate PIN
         const isPinValid = await validatePin(pin);
         if (!isPinValid) {
@@ -152,6 +154,8 @@ async function buyAirtime(networkId, amount, phone, pin) {
         });
 
         const data = await response.json();
+        console.log("Response from airtime API:", data);
+
         if (data.Status === "successful") {
             console.log("Airtime purchase successful:", data);
             alert("Airtime purchase successful!");
@@ -166,6 +170,9 @@ async function buyAirtime(networkId, amount, phone, pin) {
         alert("An error occurred while purchasing airtime.");
     }
 }
+
+
+
 
 // Add an event listener for the "Continue to pay" button
 document.getElementById("paynow").addEventListener("click", async function () {
@@ -195,10 +202,11 @@ document.getElementById("paynow").addEventListener("click", async function () {
         await buyAirtime(networkId, amount, phoneNumber, pin);
 
     } catch (error) {
-        console.error("Error processing payment:", error);
-        alert("An error occurred while processing your request.");
+        console.error("Error processing payment:", error); // Log the detailed error
+        alert("An error occurred while processing your request. Please check the console for details.");
     }
 });
+
 
 
 
