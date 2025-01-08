@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const TransactionSchema = new mongoose.Schema({
   id: { type: Number, required: true },
-  User_id: { type: Number, required: true },
+  // User_id: { type: Number, required: true },
   ident: { type: String, required: true },
   airtime_type: { type: String, required: false },
   network: { type: Number, required: true },
