@@ -54,27 +54,7 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// // Adding the new Husmodata Proxy Routes
-// // Airtime Top-Up Proxy
-// app.post("/proxy/topup", async (req, res) => {
-//   try {
-//     const response = await fetch(AIRTIME_API_URL, {
-//       method: "POST",
-//       headers: {
-//         "Authorization": `Token ${AUTH_TOKEN}`,
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify(req.body),
-//     });
 
-//     const data = await response.json();
-//     console.log("Husmodata API Response (Top-Up):", data);
-//     res.status(response.status).json(data);
-//   } catch (error) {
-//     console.error("Error in Top-Up Proxy:", error);
-//     res.status(500).json({ error: "Failed to fetch data from API." });
-//   }
-// });
 
 // // Data Purchase Proxy
 // app.post("/proxy/data", async (req, res) => {
@@ -229,6 +209,33 @@ app.get('/Verified_Users', async (req, res) => {
       return res.status(500).json({ success: false, message: 'Server error', error: error.message });
     }
   });
+
+// endpoint to update the user balance:
+  app.put('/Verified_Users/:User_id/Balance', async (req, res) => {
+    const { User_id } = req.params;
+    const { amount } = req.body;
+
+    try {
+        const user = await VerifiedUser.findOne({ User_id: String(User_id) });
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        user.Balance -= amount;
+
+        if (user.Balance < 0) {
+            return res.status(400).json({ success: false, message: 'Insufficient balance.' });
+        }
+
+        await user.save();
+        return res.status(200).json({ success: true, balance: user.Balance });
+    } catch (error) {
+        console.error('Error updating balance:', error);
+        return res.status(500).json({ success: false, message: 'Server error', error: error.message });
+    }
+});
+
   
   
     app.get('/Verified_Users/:User_id/Account_number', async (req, res) => {
@@ -488,95 +495,6 @@ app.post('/Verified_Users/save-transaction', async (req, res) => {
   }
 });
 
-
-
-
-
-
-// // Route to update user balance
-// app.put('/Verified_Users/:User_id/Balance', async (req, res) => {
-//   const { User_id } = req.params;
-//   const { Balance: deductionAmount } = req.body;
-
-//   try {
-//       const user = await VerifiedUsers.findOne({ User_id });
-//       if (!user) return res.status(404).json({ success: false, message: "User not found." });
-
-//       const newBalance = user.Balance - deductionAmount;
-//       if (newBalance < 0) return res.status(400).json({ success: false, message: "Insufficient balance." });
-
-//       user.Balance = newBalance;
-//       await user.save();
-
-//       res.status(200).json({ success: true, message: "Balance updated successfully.", user });
-//   } catch (error) {
-//       console.error("Error updating balance:", error);
-//       res.status(500).json({ success: false, message: "Failed to update balance." });
-//   }
-// });
-
-// app.post('/Verified_Users/:User_id/transactions', async (req, res) => {
-//   const { User_id } = req.params;
-//   const { Transaction_Type, Amount, mobile_number, Status, Reference } = req.body;
-
-//   try {
-//       console.log("Creating transaction...");
-//       const transaction = new Transaction({
-//           User_id,
-//           Transaction_Type,
-//           Amount,
-//           mobile_number,
-//           Status,
-//           Reference,
-//       });
-
-//       console.log("Saving transaction...");
-//       const savedTransaction = await transaction.save();
-
-//       console.log("Updating VerifiedUsers...");
-//       const updatedUser = await VerifiedUsers.findOneAndUpdate(
-//           { User_id }, // Match User_id in VerifiedUsers
-//           { $push: { Transactions: savedTransaction._id } }, // Push transaction ObjectId
-//           { new: true } // Return the updated document
-//       );
-
-//       if (!updatedUser) {
-//           return res.status(404).json({ success: false, message: "User not found." });
-//       }
-
-//       res.status(200).json({ 
-//           success: true, 
-//           message: "Transaction saved and linked successfully.", 
-//           transaction: savedTransaction 
-//       });
-//   } catch (error) {
-//       console.error("Error:", error);
-//       res.status(500).json({ success: false, message: "Failed to save transaction." });
-//   }
-// });
-
-
-
-// app.get('/Verified_Users/:User_id/transactions', async (req, res) => {
-//   const { User_id } = req.params;
-
-//   try {
-//       console.log("Fetching user and transactions...");
-//       const user = await VerifiedUsers.findOne({ User_id }).populate('Transactions');
-
-//       if (!user) {
-//           return res.status(404).json({ success: false, message: "User not found." });
-//       }
-
-//       res.status(200).json({ 
-//           success: true, 
-//           transactions: user.Transactions 
-//       });
-//   } catch (error) {
-//       console.error("Error:", error);
-//       res.status(500).json({ success: false, message: "Failed to fetch transactions." });
-//   }
-// });
 
 
 
