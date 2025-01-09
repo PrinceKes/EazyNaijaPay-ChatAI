@@ -427,30 +427,30 @@ app.get('/Verified_Users', async (req, res) => {
 
 
 
-// Get all user transactions for a specific User_id
-app.get('/Verified_Users/transactions/:User_id', async (req, res) => {
-  const { User_id } = req.params;
+// // Get all user transactions for a specific User_id
+// app.get('/Verified_Users/transactions/:User_id', async (req, res) => {
+//   const { User_id } = req.params;
 
-  if (isNaN(User_id)) {
-    return res.status(400).json({ success: false, message: "Invalid User ID format." });
-  }
+//   if (isNaN(User_id)) {
+//     return res.status(400).json({ success: false, message: "Invalid User ID format." });
+//   }
 
-  try {
-    const user = await VerifiedUsers.findOne({ User_id });
+//   try {
+//     const user = await VerifiedUsers.findOne({ User_id });
 
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User not found." });
-    }
+//     if (!user) {
+//       return res.status(404).json({ success: false, message: "User not found." });
+//     }
 
-    res.status(200).json({
-      success: true,
-      transactions: user.Transactions,
-    });
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ success: false, message: "Failed to fetch transactions.", error: error.message });
-  }
-});
+//     res.status(200).json({
+//       success: true,
+//       transactions: user.Transactions,
+//     });
+//   } catch (error) {
+//     console.error("Error:", error);
+//     res.status(500).json({ success: false, message: "Failed to fetch transactions.", error: error.message });
+//   }
+// });
 
 // Save a transaction for a user
 app.post('/Verified_Users/save-transaction', async (req, res) => {
@@ -495,6 +495,35 @@ app.post('/Verified_Users/save-transaction', async (req, res) => {
   }
 });
 
+
+// Fetch and print all transactions
+app.get('/transactions', async (req, res) => {
+  try {
+    // Retrieve all transactions from the "Transactions" collection
+    const transactions = await Transactions.find();
+
+    if (!transactions || transactions.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No transactions found.",
+      });
+    }
+
+    // Return the transactions
+    res.status(200).json({
+      success: true,
+      message: "Transactions retrieved successfully.",
+      transactions,
+    });
+  } catch (error) {
+    console.error("Error fetching transactions:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch transactions.",
+      error: error.message,
+    });
+  }
+});
 
 
 
