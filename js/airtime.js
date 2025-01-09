@@ -48,31 +48,41 @@ async function checkBalance(amount) {
     }
 }
 
+
 // Function to update user balance
 async function updateBalance(amount) {
     try {
+        // Send a PUT request to the server to update the balance
         const response = await fetch(`${API_BASE_URL}/${userId}/Balance`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ amount }),
+            body: JSON.stringify({ amount: -amount }), // Deduct the amount by making it negative
         });
 
-        if (!response.ok) throw new Error("Failed to update balance.");
+        // Handle response
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Response Error:", errorData.message);
+            throw new Error(errorData.message || "Failed to update balance.");
+        }
 
         const data = await response.json();
         if (data.success) {
-            console.log("Balance updated successfully:", data.balance);
+            console.log("Balance updated successfully. Remaining Balance:", data.balance);
             return { success: true, balance: data.balance };
         } else {
-            throw new Error("Balance update failed.");
+            throw new Error(data.message || "Balance update failed.");
         }
     } catch (error) {
-        console.error("Error updating balance:", error);
+        console.error("Error updating balance:", error.message);
+        alert("Failed to update balance. Please try again.");
         return { success: false, message: error.message };
     }
 }
+
+
 
 // Function to save airtime transaction
 async function saveAirtimeTransaction(networkId, amount, phone, status) {
