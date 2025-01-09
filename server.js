@@ -8,6 +8,7 @@ const User = require('./models/loging');
 const axios = require('axios');
 const fs = require('fs');
 const Transaction = require("./models/Transactions");
+const Transactions = require('./models/Transactions');
 const Data = require('./models/Data');
 const VerifiedUsers = require('./models/Verified_Users');
 const crypto = require('crypto');
@@ -496,10 +497,9 @@ app.post('/Verified_Users/save-transaction', async (req, res) => {
 });
 
 
-// Fetch and print all transactions
+
 app.get('/transactions', async (req, res) => {
   try {
-    // Retrieve all transactions from the "Transactions" collection
     const transactions = await Transactions.find();
 
     if (!transactions || transactions.length === 0) {
@@ -509,7 +509,6 @@ app.get('/transactions', async (req, res) => {
       });
     }
 
-    // Return the transactions
     res.status(200).json({
       success: true,
       message: "Transactions retrieved successfully.",
@@ -524,6 +523,36 @@ app.get('/transactions', async (req, res) => {
     });
   }
 });
+
+
+// // Fetch and print all transactions
+// app.get('/transactions', async (req, res) => {
+//   try {
+//     // Retrieve all transactions from the "Transactions" collection
+//     const transactions = await Transactions.find();
+
+//     if (!transactions || transactions.length === 0) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "No transactions found.",
+//       });
+//     }
+
+//     // Return the transactions
+//     res.status(200).json({
+//       success: true,
+//       message: "Transactions retrieved successfully.",
+//       transactions,
+//     });
+//   } catch (error) {
+//     console.error("Error fetching transactions:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Failed to fetch transactions.",
+//       error: error.message,
+//     });
+//   }
+// });
 
 
 
