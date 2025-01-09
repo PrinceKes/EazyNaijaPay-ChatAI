@@ -1,54 +1,56 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Retrieve user_id from localStorage
-    const user_id = localStorage.getItem('user_id');
+// Fetch transactions from the endpoint and display them
+async function fetchAndDisplayTransactions() {
+    const url = "https://eazynaijapay-server.onrender.com/transactions";
   
-    if (!user_id) {
-      alert('User ID is missing. Please log in again.');
-      window.location.href = 'https://t.me/EazyNaijaPayBot'; // Redirect if user_id is not found
-      return;
-    }
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
   
-    // Endpoint to fetch the user's transaction history
-    const transactionsEndpoint = `https://eazynaijapay-server.onrender.com/Verified_Users/${user_id}/Transaction`;
+      // Check if the response is successful
+      if (data.success) {
+        const transactions = data.transactions;
+        const notificationsContainer = document.getElementById("notifications-container");
   
-    fetch(transactionsEndpoint)
-      .then(response => response.json())
-      .then(data => {
-        const activitiesList = document.querySelector('.activities-list');
-        if (data.success && data.transactions.length > 0) {
-          // If there are transactions, loop through and display up to the 4 most recent
-          const transactions = data.transactions.slice(0, 4);
-          activitiesList.innerHTML = ''; // Clear the existing activities (if any)
+        // Clear any previous content
+        notificationsContainer.innerHTML = "";
   
-          transactions.forEach(transaction => {
-            const activityCard = document.createElement('div');
-            activityCard.classList.add('activity-card');
-            
-            // Set activity details
-            activityCard.innerHTML = `
-              <h4>${transaction.title}</h4>
-              <p>${transaction.message}</p>
-              <span>${transaction.timestamp}</span>
-            `;
-            
-            // Append the activity card to the activities list
-            activitiesList.appendChild(activityCard);
-          });
-        } else {
-          // If no transactions, show "No Notification Yet" message
-          activitiesList.innerHTML = `
-            <h1>No Notification Yet</h1>
-            <p>You have to fund your account to start with <span style="font-size: 2rem;">😄</span></p>
+        // Iterate over transactions and add to the container
+        transactions.forEach((transaction) => {
+          const status = transaction.Status || "N/A";
+          const planAmount = transaction.plan_amount || "N/A";
+          const mobileNumber = transaction.mobile_number || "N/A";
+          const createDate = transaction.create_date
+            ? new Date(transaction.create_date).toLocaleString()
+            : "N/A";
+          const customerRef = transaction.customer_ref || "N/A";
+  
+          // Mask the mobile number
+          const maskedMobileNumber =
+            mobileNumber.substring(0, 4) +
+            "****" +
+            mobileNumber.substring(mobileNumber.length - 3);
+  
+          // Create the notification HTML
+          const notificationHTML = `
+            <div class="notification">
+              <h4>Airtime Purchase Successful</h4>
+              <p>A User has bought ${planAmount} Airtime worth for ${maskedMobileNumber}</p>
+              <span>${createDate}</span>
+              <span id="reference">${customerRef}</span>
+            </div>
           `;
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching transactions:', error);
-        const activitiesList = document.querySelector('.activities-list');
-        activitiesList.innerHTML = `
-          <h1>Error fetching notifications</h1>
-          <p>There was an error fetching your transaction history. Please try again later.</p>
-        `;
-      });
-  });
+  
+          // Append to the notifications container
+          notificationsContainer.innerHTML += notificationHTML;
+        });
+      } else {
+        console.error("Failed to fetch transactions:", data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+    }
+  }
+  
+  // Call the function when the page loads
+  document.addEventListener("DOMContentLoaded", fetchAndDisplayTransactions);
   
