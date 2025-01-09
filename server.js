@@ -57,26 +57,26 @@ app.post('/login', async (req, res) => {
 
 
 
-// // Data Purchase Proxy
-// app.post("/proxy/data", async (req, res) => {
-//   try {
-//     const response = await fetch(DATA_API_URL, {
-//       method: "POST",
-//       headers: {
-//         "Authorization": `Token ${AUTH_TOKEN}`,
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify(req.body),
-//     });
+// Data Purchase Proxy
+app.post("/proxy/data", async (req, res) => {
+  try {
+    const response = await fetch(DATA_API_URL, {
+      method: "POST",
+      headers: {
+        "Authorization": `Token ${AUTH_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(req.body),
+    });
 
-//     const data = await response.json();
-//     console.log("Husmodata API Response (Data Purchase):", data);
-//     res.status(response.status).json(data);
-//   } catch (error) {
-//     console.error("Error in Data Purchase Proxy:", error);
-//     res.status(500).json({ error: "Failed to fetch data from API." });
-//   }
-// });
+    const data = await response.json();
+    console.log("Husmodata API Response (Data Purchase):", data);
+    res.status(response.status).json(data);
+  } catch (error) {
+    console.error("Error in Data Purchase Proxy:", error);
+    res.status(500).json({ error: "Failed to fetch data from API." });
+  }
+});
 
 
 
@@ -130,32 +130,32 @@ app.post("/proxy/topup", async (req, res) => {
   }
 });
 
-// Data Purchase Proxy
-app.post("/proxy/data", async (req, res) => {
-  const { User_id } = req.body; // Assume User_id is passed in the request body
-  try {
-    const response = await fetch(DATA_API_URL, {
-      method: "POST",
-      headers: {
-        "Authorization": `Token ${AUTH_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(req.body),
-    });
+// // Data Purchase Proxy
+// app.post("/proxy/data", async (req, res) => {
+//   const { User_id } = req.body; // Assume User_id is passed in the request body
+//   try {
+//     const response = await fetch(DATA_API_URL, {
+//       method: "POST",
+//       headers: {
+//         "Authorization": `Token ${AUTH_TOKEN}`,
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify(req.body),
+//     });
 
-    const data = await response.json();
-    console.log("Husmodata API Response (Data Purchase):", data);
+//     const data = await response.json();
+//     console.log("Husmodata API Response (Data Purchase):", data);
 
-    if (data.Status === "successful") {
-      await saveTransaction(data, User_id);
-    }
+//     if (data.Status === "successful") {
+//       await saveTransaction(data, User_id);
+//     }
 
-    res.status(response.status).json(data);
-  } catch (error) {
-    console.error("Error in Data Purchase Proxy:", error);
-    res.status(500).json({ error: "Failed to fetch data from API." });
-  }
-});
+//     res.status(response.status).json(data);
+//   } catch (error) {
+//     console.error("Error in Data Purchase Proxy:", error);
+//     res.status(500).json({ error: "Failed to fetch data from API." });
+//   }
+// });
 
 
 
