@@ -33,7 +33,7 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 const AIRTIME_API_URL = "https://www.husmodata.com/api/topup/";
 const DATA_API_URL = "https://www.husmodata.com/api/data/";
 // const AUTH_TOKEN = "1b4b2afd4ef0f22d082ebaf6c327de30ea1b6bcf"; (This is the active live api)
-const AUTH_TOKEN = "bab528e3b6653c6eb7809b56f6c83bcaf25bb5ec"; //test api
+const AUTH_TOKEN = "1b4b2afd4ef0f22d082ebaf6c327de30ea1b6bcf"; //test api
 
 // All your previous routes stay here...
 // Example Login Route
