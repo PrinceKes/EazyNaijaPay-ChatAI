@@ -9,7 +9,6 @@ const preferablePlanSelect = document.getElementById('preferable-plan');
 const amountToPay = document.getElementById('amount-to-pay');
 const payNowButton = document.getElementById('paynow');
 
-// Helper function to fetch plans by network ID
 const getPlansByNetworkId = (networkId) => {
   switch (networkId) {
     case '1': return plans.MTN;
@@ -20,7 +19,6 @@ const getPlansByNetworkId = (networkId) => {
   }
 };
 
-// Function to check the user's balance
 async function checkBalance(amount) {
   try {
     const response = await fetch(`${API_BASE_URL}/${userId}/Balance`);
@@ -37,15 +35,20 @@ async function checkBalance(amount) {
   }
 }
 
+
+
+
 // Function to update the user's balance
 async function updateBalance(amount) {
   try {
+    console.log("Updating balance with amount:", amount);
+
     const response = await fetch(`${API_BASE_URL}/${userId}/Balance`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ amount: -amount }),
+      body: JSON.stringify({ amount: amount }),
     });
 
     if (!response.ok) {
@@ -54,12 +57,38 @@ async function updateBalance(amount) {
     }
 
     const data = await response.json();
+
+    console.log("Balance successfully updated:", data.balance);
     return { success: true, balance: data.balance };
   } catch (error) {
-    console.error("Error updating balance:", error);
+    console.error("Error updating balance:", error.message);
     return { success: false, message: error.message };
   }
 }
+
+// // Function to update the user's balance
+// async function updateBalance(amount) {
+//   try {
+//     const response = await fetch(`${API_BASE_URL}/${userId}/Balance`, {
+//       method: "PUT",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({ amount: -amount }),
+//     });
+
+//     if (!response.ok) {
+//       const errorData = await response.json();
+//       throw new Error(errorData.message || "Failed to update balance.");
+//     }
+
+//     const data = await response.json();
+//     return { success: true, balance: data.balance };
+//   } catch (error) {
+//     console.error("Error updating balance:", error);
+//     return { success: false, message: error.message };
+//   }
+// }
 
 // Function to save the data transaction
 async function saveDataTransaction(networkId, planId, amount, phone, status) {
@@ -80,7 +109,6 @@ async function saveDataTransaction(networkId, planId, amount, phone, status) {
   }
 }
 
-// Populate plan options based on selected network
 networkSelect.addEventListener('change', () => {
   const selectedNetworkId = networkSelect.value;
   preferablePlanSelect.innerHTML = '<option value="" disabled selected>Choose your desired plan</option>';
@@ -95,7 +123,6 @@ networkSelect.addEventListener('change', () => {
   });
 });
 
-// Update amount field when a plan is selected
 preferablePlanSelect.addEventListener('change', (e) => {
   const selectedPlanId = e.target.value;
   const selectedNetworkId = networkSelect.value;
@@ -108,7 +135,6 @@ preferablePlanSelect.addEventListener('change', (e) => {
   }
 });
 
-// Handle the "Pay Now" button click event
 payNowButton.addEventListener('click', async () => {
   const selectedNetworkId = networkSelect.value;
   const selectedPlanId = preferablePlanSelect.value;

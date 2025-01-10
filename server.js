@@ -58,26 +58,7 @@ app.post('/login', async (req, res) => {
 
 
 
-// // Data Purchase Proxy
-// app.post("/proxy/data", async (req, res) => {
-//   try {
-//     const response = await fetch(DATA_API_URL, {
-//       method: "POST",
-//       headers: {
-//         "Authorization": `Token ${AUTH_TOKEN}`,
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify(req.body),
-//     });
 
-//     const data = await response.json();
-//     console.log("Husmodata API Response (Data Purchase):", data);
-//     res.status(response.status).json(data);
-//   } catch (error) {
-//     console.error("Error in Data Purchase Proxy:", error);
-//     res.status(500).json({ error: "Failed to fetch data from API." });
-//   }
-// });
 
 
 
@@ -157,25 +138,6 @@ app.post("/proxy/data", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch data from API." });
   }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // All your other routes (e.g., Verified_Users, profile_picture, etc.) stay here...
@@ -515,6 +477,29 @@ app.get('/transactions', async (req, res) => {
       success: false,
       message: "Failed to fetch transactions.",
       error: error.message,
+    });
+  }
+});
+
+
+// DELETE endpoint to terminate a user account
+app.delete('/Verified_Users/:User_id', (req, res) => {
+  const userId = parseInt(req.params.User_id, 10);
+
+  const userIndex = verifiedUsers.findIndex(user => user.User_id === userId);
+
+  if (userIndex !== -1) {
+    // Remove the user from the database
+    const removedUser = verifiedUsers.splice(userIndex, 1);
+    res.status(200).json({
+      success: true,
+      message: 'User account terminated successfully.',
+      data: removedUser,
+    });
+  } else {
+    res.status(404).json({
+      success: false,
+      message: `User with User_id ${userId} not found.`,
     });
   }
 });
