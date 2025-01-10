@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const user_id = localStorage.getItem('user_id');
   
     if (!user_id) {
-      alert('User ID is missing. Please log in again.');
+      showAlert('User ID is missing. Please log in again.');
       window.location.href = 'https://t.me/EazyNaijaPayBot'; // Redirect if user_id is not found
       return;
     }

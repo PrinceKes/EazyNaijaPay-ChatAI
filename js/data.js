@@ -142,12 +142,12 @@ payNowButton.addEventListener('click', async () => {
   const pin = `${document.getElementById('pin1').value}${document.getElementById('pin2').value}${document.getElementById('pin3').value}${document.getElementById('pin4').value}`;
 
   if (!selectedNetworkId || !selectedPlanId || !phoneNumber || !pin) {
-    alert('Please complete all the fields and select a plan');
+    showAlert('Please complete all the fields and select a plan');
     return;
   }
 
   if (pin.length !== 4) {
-    alert('Pin must be a 4-digit number.');
+    showAlert('Pin must be a 4-digit number.');
     return;
   }
 
@@ -157,7 +157,7 @@ payNowButton.addEventListener('click', async () => {
 
     const pinData = await pinResponse.json();
     if (pinData.user.User_pin.trim() !== pin.trim()) {
-      alert('Invalid Pin');
+      showAlert('Invalid Pin');
       return;
     }
 
@@ -165,7 +165,7 @@ payNowButton.addEventListener('click', async () => {
     const selectedPlan = selectedPlans.find(plan => plan.plan_id == selectedPlanId);
 
     if (!selectedPlan) {
-      alert('Selected plan not found.');
+      showAlert('Selected plan not found.');
       return;
     }
 
@@ -173,7 +173,7 @@ payNowButton.addEventListener('click', async () => {
 
     const balanceCheck = await checkBalance(amount);
     if (!balanceCheck.success) {
-      alert(balanceCheck.message);
+      showAlert(balanceCheck.message);
       return;
     }
 
@@ -197,14 +197,14 @@ payNowButton.addEventListener('click', async () => {
     if (responseData.Status && responseData.Status.toLowerCase() === 'successful') {
       await updateBalance(amount);
       await saveDataTransaction(selectedNetworkId, selectedPlanId, amount, phoneNumber, 'successful');
-      alert('Data purchase successful: ' + responseData.api_response);
+      showAlert('Data purchase successful: ' + responseData.api_response);
     } else {
       await saveDataTransaction(selectedNetworkId, selectedPlanId, amount, phoneNumber, 'failed');
-      alert('Failed to purchase data: ' + (responseData.api_response || 'Unknown error'));
+      showAlert('Failed to purchase data: ' + (responseData.api_response || 'Unknown error'));
     }
   } catch (error) {
     console.error('Error processing data purchase:', error);
-    alert('Error occurred. Please try again later.');
+    showAlert('Error occurred. Please try again later.');
   }
 });
 

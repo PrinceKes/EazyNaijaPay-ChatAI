@@ -2,7 +2,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     const user_id = localStorage.getItem('user_id');
   
     if (!user_id) {
-      alert('User ID not found. Please log in again.');
+      showAlert('User ID not found. Please log in again.');
       window.location.href = '/login.html';
       return;
     }
@@ -20,11 +20,11 @@ window.addEventListener('DOMContentLoaded', async () => {
         profileImgElement.src = data.placeholder || '../assets/default-profile-icon.png';
       } else {
         console.error('Failed to load profile picture:', response.status);
-        alert('Unable to load profile picture. Using default image.');
+        showAlert('Unable to load profile picture. Using default image.');
       }
     } catch (error) {
       console.error('Error fetching profile picture:', error);
-      alert('An error occurred while loading the profile picture. Please try again later.');
+      showAlert('An error occurred while loading the profile picture. Please try again later.');
     }
   });
   

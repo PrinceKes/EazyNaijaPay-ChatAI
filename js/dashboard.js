@@ -2,7 +2,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   const user_id = localStorage.getItem('user_id');
 
   if (!user_id) {
-    alert('User ID not found. Please log in again.');
+    showAlert('User ID not found. Please log in again.');
     window.location.href = '/login.html';
     return;
   }
@@ -13,7 +13,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     if (!response.ok) {
       console.error('Error fetching balance:', response.statusText); // Debug log for error message
-      alert('Error retrieving balance. Please try again later.');
+      showAlert('Error retrieving balance. Please try again later.');
       return;
     }
 
@@ -28,10 +28,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         balanceElement.textContent = `${balance} NGN`;
       }
     } else {
-      alert('Unable to retrieve balance. Please contact support.');
+      showAlert('Unable to retrieve balance. Please contact support.');
     }
   } catch (error) {
     console.error('Fetch Error:', error.message); // Debug log for fetch error
-    alert('An error occurred while retrieving balance. Please try again later.');
+    showAlert('An error occurred while retrieving balance. Please try again later.');
   }
 });

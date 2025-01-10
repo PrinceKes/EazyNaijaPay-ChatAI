@@ -11,7 +11,7 @@ const networkMap = {
 
 const userId = localStorage.getItem("user_id") || localStorage.getItem("User_id");
 if (!userId) {
-    alert("User not authenticated. Please log in again.");
+    showAlert("User not authenticated. Please log in again.");
     window.location.href = "/login.html";
 }
 
@@ -70,7 +70,7 @@ async function updateBalance(amount) {
         }
     } catch (error) {
         console.error("Error updating balance:", error.message);
-        alert("Failed to update balance. Please try again.");
+        showAlert("Failed to update balance. Please try again.");
         return { success: false, message: error.message };
     }
 }
@@ -97,7 +97,7 @@ async function buyAirtime(networkId, amount, phone) {
     try {
         const balanceCheck = await checkBalance(amount);
         if (!balanceCheck.success) {
-            alert(balanceCheck.message);
+            showAlert(balanceCheck.message);
             return;
         }
 
@@ -128,10 +128,13 @@ async function buyAirtime(networkId, amount, phone) {
 
         await saveAirtimeTransaction(networkId, amount, phone, "success");
         await updateBalance(-amount);
-        alert("Airtime purchase successful!");
+        showAlert(
+            "🎉 Wow! 🎉\nYou’ve successfully purchased airtime using EazyNaijaPay Bot! 💚\nWe’ll be expecting you again! 😊"
+        );
+        
     } catch (error) {
         console.error("Error processing airtime purchase:", error);
-        alert("Airtime purchase failed. Please try again.");
+        showAlert("Airtime purchase failed. Please try again.");
     }
 }
 
@@ -148,13 +151,13 @@ document.getElementById("paynow").addEventListener("click", async () => {
     ].join("");
 
     if (!network || !phone || isNaN(amount) || pin.length !== 4) {
-        alert("Please fill in all fields correctly.");
+        showAlert("Please fill in all fields correctly.");
         return;
     }
 
     const isPinValid = await validatePin(pin);
     if (!isPinValid) {
-        alert("Invalid PIN. Please try again.");
+        showAlert("Invalid PIN. Please try again.");
         return;
     }
 

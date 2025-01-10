@@ -4,7 +4,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     const user_id = localStorage.getItem('user_id');
   
     if (!user_id) {
-      alert('User ID not found. Please log in again.');
+      showAlert('User ID not found. Please log in again.');
       window.location.href = '/login.html';
       return;
     }
@@ -17,7 +17,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   
       if (!response.ok) {
         console.error('Error fetching username:', response.status);
-        alert('Error retrieving username. Please try again later.');
+        showAlert('Error retrieving username. Please try again later.');
         return;
       }
   
@@ -37,11 +37,11 @@ window.addEventListener('DOMContentLoaded', async () => {
           userIdElement.textContent = `User Permit ID: ${user_id}`;
         }
       } else {
-        alert('Unable to retrieve username. Please contact support.');
+        showAlert('Unable to retrieve username. Please contact support.');
       }
     } catch (error) {
       console.error('Error fetching username:', error);
-      alert('An error occurred while retrieving the username. Please try again later.');
+      showAlert('An error occurred while retrieving the username. Please try again later.');
     }
   });
   

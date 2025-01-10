@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const userId = localStorage.getItem('user_id');
   
       if (!userId) {
-        alert('User ID is missing. Please log in again.');
+        showAlert('User ID is missing. Please log in again.');
         window.location.href = 'https://t.me/EazyNaijaPayBot';
         return;
       }
@@ -24,17 +24,17 @@ document.addEventListener('DOMContentLoaded', () => {
           .then(response => response.json())
           .then(data => {
             if (data.success) {
-              alert('Your account has been terminated successfully.');
+              showAlert('Your account has been terminated successfully.');
               // Clear localStorage and redirect the user
               localStorage.clear();
               window.location.href = 'https://t.me/EazyNaijaPayBot';
             } else {
-              alert(`Failed to terminate account: ${data.message}`);
+              showAlert(`Failed to terminate account: ${data.message}`);
             }
           })
           .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while terminating your account. Please try again later.');
+            showAlert('An error occurred while terminating your account. Please try again later.');
           });
       }
     });

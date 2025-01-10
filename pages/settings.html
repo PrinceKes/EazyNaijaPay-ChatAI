@@ -26,7 +26,7 @@
                 <li><a href="#">Join Community</a></li>
                 <li><a href="#" class="change-pin" >Change Pin</a></li>
                 <li><a href="#">Contact Support</a></li>
-                <li><a href="#">Refer Friends</a></li>
+                <li><a href="#" class="refer">Refer a Friend</a></li>
                 <li><a href="#" class="terminate">Terminate Account</a></li>
             </ul>
         </div>
@@ -40,6 +40,20 @@
                 <button id="cancelTerminate" class="btn-secondary">Cancel</button>
             </div>
         </div>
+
+        <!-- Refer Modal -->
+        <div id="refer-modal" class="modal2">
+            <div class="modal-content2">
+                <button class="close-modal">×</button>
+                <p>You will get 100 NGN as rewards on each of your referrals that funds their account.</p>
+                <p>You will need to get your referral "User Permit ID" and "Username", send them to the administrator to get your reward within 24 hours.</p>
+                <div class="referral-link">
+                    <input id="referral-link" type="text" readonly value="https://t.me/EazyNaijaPayBot?start=referral">
+                    <button id="copy-link">Copy Referral Link</button>
+                </div>
+            </div>
+        </div>
+
 
         <!-- Bottom Navbar -->
         <nav class="bottom-navbar">
@@ -58,5 +72,8 @@
     <script src="../js/setting.js"></script>
     <script src="../js/profile.js"></script>
     <script src="../js/terminate.js"></script>
+    <script src="../js/refers.js"></script>
+    <script src="../js/alerts.js"></script>
+
 </body>
 </html>

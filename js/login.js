@@ -13,7 +13,7 @@ document.getElementById('login').addEventListener('submit', async (e) => {
 
   // Validate inputs
   if (!user_id || !email || pin.length !== 4) {
-      alert('Please fill in all fields correctly.');
+    showAlert('Please fill in all fields correctly.');
       console.log("Validation failed");
       return;
   }
@@ -39,11 +39,11 @@ document.getElementById('login').addEventListener('submit', async (e) => {
           window.location.href = './pages/Dashboard.html';
       } else {
           console.error('Login failed:', data.message || 'Invalid credentials');
-          alert(data.message || 'Invalid credentials. Please try again.');
+          showAlert(data.message || 'Invalid credentials. Please try again.');
       }
   } catch (error) {
       console.error('Error during login:', error);
-      alert('An error occurred. Please try again.');
+      showAlert('An error occurred. Please try again.');
   }
 });
 

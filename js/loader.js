@@ -5,7 +5,7 @@ window.addEventListener('load', () => {
     const user_id = urlParams.get('user_id');
   
     if (!user_id) {
-      alert('User ID is missing. Please click the correct link.');
+      showAlert('User ID is missing. Please click the correct link.');
       window.location.href = 'https://t.me/EazyNaijaPayBot'; // Redirect to Telegram bot if no user_id is provided
     } else {
       console.log(`User ID detected: ${user_id}`);
