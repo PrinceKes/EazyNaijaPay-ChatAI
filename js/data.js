@@ -109,7 +109,7 @@ payNowButton.addEventListener('click', () => {
 
           console.log('Payload:', requestBody);
 
-          fetch('https://eazynaijapay-server.onrender.com/proxy/topup', {
+          fetch('https://eazynaijapay-server.onrender.com/proxy/data', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
