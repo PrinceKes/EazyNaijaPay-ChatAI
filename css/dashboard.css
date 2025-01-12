@@ -14,14 +14,11 @@
   }
   
   /* Hero Section */
-.hero {
+  /* Hero Section */
+/* .hero {
   background: url('../assets/bg.png') no-repeat center center / cover;
   height: 300px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
+  position: relative;
   color: white;
   border-bottom-left-radius: 30px;
   border-bottom-right-radius: 30px;
@@ -29,11 +26,29 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  scroll-behavior: fixed;
+  z-index: 1000;
+} */
+
+
+.hero {
+  background: url('../assets/bg.png') no-repeat center center / cover;
+  height: 300px;
+  position: fixed; /* Make it fixed */
+  top: 0; /* Position it at the top of the viewport */
+  left: 0; /* Position it to the left */
+  width: 100%; /* Make it stretch the full width of the viewport */
+  color: white;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
 }
 
-/* .services, .recent-activities {
-  margin-top: 320px;
-} */
+
 
 
 
@@ -146,8 +161,9 @@
 
 
   /* working */
-  
+
   .services {
+    margin-top: 310px;
     padding: 20px;
     text-align: center;
   }
@@ -166,7 +182,7 @@
   }
   
   .service-card {
-    background: #FFFFFF;
+    background: #fff;
     border-radius: 12px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     padding: 15px;
@@ -194,7 +210,6 @@
   
   .recent-activities {
     padding: 20px;
-    padding-bottom: 150px;
   }
   
   .activity-header {
