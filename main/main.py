@@ -281,7 +281,7 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE):
     if isinstance(update, Update):
         await update.message.reply_text("An unexpected error occurred. Please try again later.")
 
-# Main function to start the bot
+# Main function to start the chat bot 
 def main():
     # Create the application
     application = Application.builder().token("8136531029:AAHlArThifhrPiOQuQv5HYi_gBpt7_XZFjA").build()
