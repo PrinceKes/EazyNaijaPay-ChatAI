@@ -1,6 +1,9 @@
 const API_BASE_URL = "https://eazynaijapay-server.onrender.com/Verified_Users";
 const AIRTIME_API_URL = "https://eazynaijapay-server.onrender.com/proxy/topup";
 const AUTH_TOKEN = "1b4b2afd4ef0f22d082ebaf6c327de30ea1b6bcf";
+//UsersTransactions.js
+const UserTransaction = require("./models/UserTransaction");
+
 
 const networkMap = {
     "1": "MTN",
@@ -78,20 +81,60 @@ async function updateBalance(amount) {
 
 
 // Function to save airtime transaction (COMING BACK TO WORK HERE)
-async function saveAirtimeTransaction(networkId, amount, phone, status) {
-    try {
-        const transactionData = {
-            network: networkId,
-            amount,
-            phone,
-            status,
-            user_id: userId,
-        };
-        console.log("Saving transaction:", transactionData);
-    } catch (error) {
-        console.error("Error saving airtime transaction:", error);
-    }
+//async function saveAirtimeTransaction(networkId, amount, phone, status) {
+//    try {
+//        const transactionData = {
+//            network: networkId,
+//            amount,
+//            phone,
+//            status,
+//            user_id: userId,
+//        };
+//        console.log("Saving transaction:", transactionData);
+//    } catch (error) {
+//        console.error("Error saving airtime transaction:", error);
+//    }
+//}
+
+
+
+async function saveAirtimeTransaction(networkId, amount, phone, status, userId) {
+  try {
+    const transactionData = {
+      networkId,
+      amount,
+      phone,
+      status,
+      type: "airtime", // Mark this as an airtime transaction
+    };
+
+    // Upsert: Add a new transaction under the user's transactions
+    const result = await UserTransaction.findOneAndUpdate(
+      { User_id: userId },
+      { $push: { transactions: transactionData } }, // Add the transaction
+      { upsert: true, new: true } // Create if doesn't exist
+    );
+
+    console.log("Airtime transaction saved:", result);
+  } catch (error) {
+    console.error("Error saving airtime transaction:", error);
+  }
 }
+
+module.exports = { saveAirtimeTransaction };
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 async function buyAirtime(networkId, amount, phone) {
     try {
