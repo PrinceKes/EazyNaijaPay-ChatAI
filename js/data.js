@@ -9,7 +9,7 @@ const preferablePlanSelect = document.getElementById('preferable-plan');
 const amountToPay = document.getElementById('amount-to-pay');
 const payNowButton = document.getElementById('paynow');
 
-const UserTransaction = require("./models/UserTransaction");
+const UserTransaction = require("../models/UserTransaction");
 
 
 const getPlansByNetworkId = (networkId) => {
