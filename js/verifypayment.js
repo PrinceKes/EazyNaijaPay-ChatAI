@@ -2,7 +2,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const adminDMButton = document.getElementById('adminDM');
     const transactionScreenshotInput = document.getElementById('transactionScreenshot');
     const telegramBotToken = '8136531029:AAHlArThifhrPiOQuQv5HYi_gBpt7_XZFjA'; // Replace with your bot token
-    const telegramGroupId = '-2217805055'; // Use the group chat ID with a "-" prefix for groups
+    const telegramGroupId = '-4690077675'; // Use the group chat ID with a "-" prefix for groups
   
     adminDMButton.addEventListener('click', async () => {
       const userId = localStorage.getItem('user_id') || localStorage.getItem('User_id');
