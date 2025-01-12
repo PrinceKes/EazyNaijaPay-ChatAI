@@ -2,7 +2,7 @@ const API_BASE_URL = "https://eazynaijapay-server.onrender.com/Verified_Users";
 const AIRTIME_API_URL = "https://eazynaijapay-server.onrender.com/proxy/topup";
 const AUTH_TOKEN = "1b4b2afd4ef0f22d082ebaf6c327de30ea1b6bcf";
 //UsersTransactions.js
-const UserTransaction = require("./models/UserTransaction");
+const UserTransaction = require("../models/UserTransaction");
 
 
 const networkMap = {
