@@ -9,6 +9,9 @@ const preferablePlanSelect = document.getElementById('preferable-plan');
 const amountToPay = document.getElementById('amount-to-pay');
 const payNowButton = document.getElementById('paynow');
 
+const UserTransaction = require("./models/UserTransaction");
+
+
 const getPlansByNetworkId = (networkId) => {
   switch (networkId) {
     case '1': return plans.MTN;
@@ -66,48 +69,74 @@ async function updateBalance(amount) {
   }
 }
 
-// // Function to update the user's balance
-// async function updateBalance(amount) {
-//   try {
-//     const response = await fetch(`${API_BASE_URL}/${userId}/Balance`, {
-//       method: "PUT",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({ amount: -amount }),
-//     });
 
-//     if (!response.ok) {
-//       const errorData = await response.json();
-//       throw new Error(errorData.message || "Failed to update balance.");
-//     }
 
-//     const data = await response.json();
-//     return { success: true, balance: data.balance };
-//   } catch (error) {
-//     console.error("Error updating balance:", error);
-//     return { success: false, message: error.message };
-//   }
-// }
+
+
+
+
+
 
 // Function to save the data transaction
-async function saveDataTransaction(networkId, planId, amount, phone, status) {
+//async function saveDataTransaction(networkId, planId, amount, phone, status) {
+//  try {
+//    const transactionData = {
+//      network: networkId,
+//      plan: planId,
+//      amount,
+//      phone,
+//      status,
+//      user_id: userId,
+//    };
+
+//    console.log("Saving transaction:", transactionData);
+//    // You can add a POST request to save the transaction on the server if needed
+//  } catch (error) {
+//    console.error("Error saving data transaction:", error);
+//  }
+//}
+
+
+
+
+async function saveDataTransaction(networkId, planId, amount, phone, status, userId) {
   try {
     const transactionData = {
-      network: networkId,
-      plan: planId,
+      networkId,
+      planId,
       amount,
       phone,
       status,
-      user_id: userId,
+      type: "data", // Mark this as a data transaction
     };
 
-    console.log("Saving transaction:", transactionData);
-    // You can add a POST request to save the transaction on the server if needed
+    // Upsert: Add a new transaction under the user's transactions
+    const result = await UserTransaction.findOneAndUpdate(
+      { User_id: userId },
+      { $push: { transactions: transactionData } }, // Add the transaction
+      { upsert: true, new: true } // Create if doesn't exist
+    );
+
+    console.log("Data transaction saved:", result);
   } catch (error) {
     console.error("Error saving data transaction:", error);
   }
 }
+
+module.exports = { saveDataTransaction };
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 networkSelect.addEventListener('change', () => {
   const selectedNetworkId = networkSelect.value;
